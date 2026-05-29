@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/about.css' %}?v=4">
+</head>
+<body>
+
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions"><a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a></div>
+</nav>
+
+<section class="about" id="about" style="padding-top: 140px;">
+  <div class="about-left">
+    <div class="about-year">KR</div>
+    <div class="about-line"></div>
+    <div class="about-stats">
+      <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Happy Customers</div></div>
+      <div class="stat"><div class="stat-num">100+</div><div class="stat-label">Unique Styles</div></div>
+      <div class="stat"><div class="stat-num">5★</div><div class="stat-label">Customer Rating</div></div>
+    </div>
+  </div>
+  <div class="about-right">
+    <h2 class="about-title">WHO WE<br><span class="text-gold">ARE</span></h2>
+    <p class="about-desc">Krishna Readymade brings you the latest fashion trends with comfort, quality, and affordability. We believe great style shouldn't come with an unreachable price tag.</p>
+    <p class="about-desc about-desc-small">From everyday casuals to statement pieces, every item in our collection is carefully selected to help you express your unique identity through fashion.</p>
+    <div class="about-values">
+      <div class="value-item"><div class="value-title">QUALITY FIRST</div><div class="value-text">Every piece is inspected for premium quality before it reaches you.</div></div>
+      <div class="value-item"><div class="value-title">AFFORDABLE</div><div class="value-text">Trending fashion at prices that work for real people.</div></div>
+      <div class="value-item"><div class="value-title">TRENDY</div><div class="value-text">Updated collections every season to keep your wardrobe fresh.</div></div>
+      <div class="value-item"><div class="value-title">LOCAL LOVE</div><div class="value-text">Proudly serving our community with fashion that feels right.</div></div>
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'js/about.js' %}" defer></script>
+</body>
+</html>

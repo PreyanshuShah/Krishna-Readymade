@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Collection | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/collection.css' %}?v=4">
+</head>
+<body>
+
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a>
+  </div>
+</nav>
+
+<section class="categories" id="categories" style="padding-top: 140px;">
+  <div class="section-header">
+    <span class="section-label">Browse By</span>
+    <h2 class="section-title">OUR <em>COLLECTIONS</em></h2>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card" data-filter="shirts">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-1"><span class="cat-icon">👔</span></div></div>
+      <div class="cat-overlay"><div class="cat-name">SHIRTS</div><div class="cat-count">24 STYLES</div></div>
+    </div>
+    <div class="cat-card" data-filter="tshirts">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-2"><span class="cat-icon">👕</span></div></div>
+      <div class="cat-overlay"><div class="cat-name">T-SHIRTS</div><div class="cat-count">36 STYLES</div></div>
+    </div>
+    <div class="cat-card" data-filter="jeans">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-3"><span class="cat-icon">👖</span></div></div>
+      <div class="cat-overlay"><div class="cat-name">JEANS</div><div class="cat-count">18 STYLES</div></div>
+    </div>
+    <div class="cat-card" data-filter="jackets">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-4"><span class="cat-icon">🧥</span></div></div>
+      <div class="cat-overlay"><div class="cat-name">JACKETS</div><div class="cat-count">12 STYLES</div></div>
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'js/collection.js' %}" defer></script>
+</body>
+</html>

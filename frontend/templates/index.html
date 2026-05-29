@@ -1,0 +1,368 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krishna Readymade – Style That Defines You</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=5">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-brand">Krishna<span class="text-gold">.</span></div>
+  <div class="loader-line"></div>
+  <div class="loader-tagline">Style That Defines You</div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>YOUR CART (<span id="cartCount">0</span>)</h3>
+    <button class="cart-close" id="cartClose">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <span class="cart-empty-icon">🛍️</span>
+      <p>Your cart is empty</p>
+      <p class="cart-empty-note">Add items to get started</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span>TOTAL</span>
+      <span>NPR <span id="cartTotal">0</span></span>
+    </div>
+    <button class="checkout-btn">ORDER VIA WHATSAPP / INSTAGRAM</button>
+  </div>
+</div>
+
+<!-- QUICK VIEW MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-img" id="modalImg">👕</div>
+    <div class="modal-content">
+      <div class="product-badge product-badge-inline badge-new" id="modalBadge">NEW</div>
+      <div class="modal-name" id="modalName">Premium Cotton Tee</div>
+      <div class="modal-price" id="modalPrice">NPR 1,299</div>
+      <div class="size-label">SELECT SIZE</div>
+      <div class="sizes" id="sizeSelector">
+        <button class="size-btn" data-size="XS">XS</button>
+        <button class="size-btn" data-size="S">S</button>
+        <button class="size-btn selected" data-size="M">M</button>
+        <button class="size-btn" data-size="L">L</button>
+        <button class="size-btn" data-size="XL">XL</button>
+        <button class="size-btn" data-size="XXL">XXL</button>
+      </div>
+      <div class="size-label size-label-spaced">PRODUCT DETAILS</div>
+      <p class="modal-details">Premium quality fabric, slim fit design. Breathable and comfortable for all-day wear. Machine washable.</p>
+      <button class="modal-add-btn" id="modalAddBtn">ADD TO CART</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-icon" title="Search">🔍</button>
+    <button class="nav-icon" title="Wishlist">♡</button>
+    <button class="nav-icon" id="cartToggle" title="Cart">
+      🛒<span class="cart-count" id="navCartCount">0</span>
+    </button>
+    <button class="nav-cta">SHOP NOW</button>
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-grid-pattern"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🔥 New Collection 2025</div>
+    <h1 class="hero-title">
+      <span class="line-1">NEW</span>
+      <span class="line-2">DROP</span>
+      <span class="line-3">KRISHNA</span>
+    </h1>
+    <p class="hero-sub">"Style That Defines You"</p>
+    <div class="hero-btns">
+      <a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a>
+      <a href="{% url 'collection' %}" class="btn-outline">EXPLORE COLLECTION</a>
+    </div>
+  </div>
+  <div class="hero-model-frame">
+    <div class="model-inner">
+      <div class="drop-number drop-number-small">KR</div>
+      <div class="model-silhouette"></div>
+      <div class="model-tag">FEATURED LOOK • SS25</div>
+    </div>
+    <div class="drop-tag-float">NEW DROP ✦</div>
+  </div>
+  <div class="hero-corner-tag">KRISHNA COLLECTION · SS25</div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span class="scroll-text">SCROLL</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-content">
+    <span>KRISHNA READYMADE</span><span class="marquee-dot"></span>
+    <span>STYLE THAT DEFINES YOU</span><span class="marquee-dot"></span>
+    <span>NEW DROP SS25</span><span class="marquee-dot"></span>
+    <span>FREE DELIVERY IN NEPAL</span><span class="marquee-dot"></span>
+    <span>TRENDY & AFFORDABLE</span><span class="marquee-dot"></span>
+    <span>KRISHNA READYMADE</span><span class="marquee-dot"></span>
+    <span>STYLE THAT DEFINES YOU</span><span class="marquee-dot"></span>
+    <span>NEW DROP SS25</span><span class="marquee-dot"></span>
+    <span>FREE DELIVERY IN NEPAL</span><span class="marquee-dot"></span>
+    <span>TRENDY & AFFORDABLE</span><span class="marquee-dot"></span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="categories" id="categories">
+  <div class="section-header reveal">
+    <span class="section-label">Browse By</span>
+    <h2 class="section-title">OUR <em>COLLECTIONS</em></h2>
+  </div>
+  <div class="cat-grid reveal">
+    <div class="cat-card" data-filter="shirts">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-1"><span class="cat-icon">👔</span></div></div>
+      <div class="cat-overlay">
+        <div class="cat-name">SHIRTS</div>
+        <div class="cat-count">24 STYLES</div>
+      </div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" data-filter="tshirts">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-2"><span class="cat-icon">👕</span></div></div>
+      <div class="cat-overlay">
+        <div class="cat-name">T-SHIRTS</div>
+        <div class="cat-count">36 STYLES</div>
+      </div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" data-filter="jeans">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-3"><span class="cat-icon">👖</span></div></div>
+      <div class="cat-overlay">
+        <div class="cat-name">JEANS</div>
+        <div class="cat-count">18 STYLES</div>
+      </div>
+      <div class="cat-arrow">→</div>
+    </div>
+    <div class="cat-card" data-filter="jackets">
+      <div class="cat-bg"><div class="cat-bg-inner cat-bg-4"><span class="cat-icon">🧥</span></div></div>
+      <div class="cat-overlay">
+        <div class="cat-name">JACKETS</div>
+        <div class="cat-count">12 STYLES</div>
+      </div>
+      <div class="cat-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <div class="section-header reveal">
+    <span class="section-label">Handpicked For You</span>
+    <h2 class="section-title">TRENDING <em>NOW</em></h2>
+  </div>
+  <div class="filter-bar reveal">
+    <span class="filter-label">FILTER:</span>
+    <button class="filter-btn active" data-filter-btn data-category="all">ALL</button>
+    <button class="filter-btn" data-filter-btn data-category="tshirts">T-SHIRTS</button>
+    <button class="filter-btn" data-filter-btn data-category="shirts">SHIRTS</button>
+    <button class="filter-btn" data-filter-btn data-category="jeans">JEANS</button>
+    <button class="filter-btn" data-filter-btn data-category="jackets">JACKETS</button>
+    <span class="filter-label filter-label-spaced">SIZE:</span>
+    <button class="filter-btn">S</button>
+    <button class="filter-btn">M</button>
+    <button class="filter-btn">L</button>
+    <button class="filter-btn">XL</button>
+  </div>
+  <div class="product-grid reveal" id="productGrid"></div>
+</section>
+
+<!-- NEW DROP -->
+<section class="new-drop" id="new-drop">
+  <div class="drop-visual reveal-left">
+    <div class="drop-frame">
+      <div class="drop-frame-inner">
+        <div class="drop-pattern"></div>
+        <div class="drop-number">25</div>
+        <div class="drop-center-stack">
+          <div class="drop-emoji">🔥</div>
+          <div class="drop-season-code">SS 2025</div>
+        </div>
+      </div>
+      <div class="drop-tag-float">EXCLUSIVE DROP</div>
+    </div>
+  </div>
+  <div class="drop-content reveal-right">
+    <span class="drop-season">✦ Summer Season 2025</span>
+    <h2 class="drop-title">THE BOLD<br>COLLECTION</h2>
+    <p class="drop-desc">Crafted for those who don't follow trends — they set them. The Krishna SS25 collection blends streetwear edge with everyday comfort, giving you looks that turn heads.</p>
+    <div class="drop-features">
+      <div class="drop-feature">Premium breathable fabric</div>
+      <div class="drop-feature">Limited edition colorways</div>
+      <div class="drop-feature">Sizes XS to XXL available</div>
+      <div class="drop-feature">Affordable luxury pricing</div>
+    </div>
+    <div class="drop-countdown">
+      <div class="countdown-item">
+        <span class="countdown-num" id="days">00</span>
+        <span class="countdown-label">DAYS</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="hours">00</span>
+        <span class="countdown-label">HOURS</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="mins">00</span>
+        <span class="countdown-label">MINS</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-num" id="secs">00</span>
+        <span class="countdown-label">SECS</span>
+      </div>
+    </div>
+    <a href="{% url 'shop' %}" class="btn-primary">SHOP THE DROP</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-left reveal-left">
+    <div class="about-year">KR</div>
+    <div class="about-line"></div>
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Happy Customers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100+</div>
+        <div class="stat-label">Unique Styles</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5★</div>
+        <div class="stat-label">Customer Rating</div>
+      </div>
+    </div>
+  </div>
+  <div class="about-right reveal-right">
+    <h2 class="about-title">WHO WE<br><span class="text-gold">ARE</span></h2>
+    <p class="about-desc">Krishna Readymade brings you the latest fashion trends with comfort, quality, and affordability. We believe great style shouldn't come with an unreachable price tag.</p>
+    <p class="about-desc about-desc-small">From everyday casuals to statement pieces, every item in our collection is carefully selected to help you express your unique identity through fashion.</p>
+    <div class="about-values">
+      <div class="value-item">
+        <div class="value-title">QUALITY FIRST</div>
+        <div class="value-text">Every piece is inspected for premium quality before it reaches you.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-title">AFFORDABLE</div>
+        <div class="value-text">Trending fashion at prices that work for real people.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-title">TRENDY</div>
+        <div class="value-text">Updated collections every season to keep your wardrobe fresh.</div>
+      </div>
+      <div class="value-item">
+        <div class="value-title">LOCAL LOVE</div>
+        <div class="value-text">Proudly serving our community with fashion that feels right.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo">Krishna<span>.</span></span>
+      <p class="footer-tagline">"Style That Defines You"</p>
+      <div class="social-links">
+        <a href="https://instagram.com/krishnareadymade" target="_blank" class="social-link">📸</a>
+        <a href="https://wa.me/9802792736" target="_blank" class="social-link">💬</a>
+        <a href="tel:9802792736" class="social-link">📞</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>SHOP</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'shop' %}">T-Shirts</a></li>
+        <li><a href="{% url 'shop' %}">Shirts</a></li>
+        <li><a href="{% url 'shop' %}">Jeans</a></li>
+        <li><a href="{% url 'shop' %}">Jackets</a></li>
+        <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>INFO</h4>
+      <ul class="footer-links">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'about' %}">About Us</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">Returns Policy</a></li>
+        <li><a href="#">Delivery Info</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>CONTACT US</h4>
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <a href="tel:9802792736">9802792736</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📱</span>
+        <a href="tel:9765381026">9765381026</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">💬</span>
+        <a href="https://wa.me/9802792736" target="_blank">WhatsApp Us</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <span>Nepal</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon">📸</span>
+        <a href="https://instagram.com" target="_blank">@KrishnaReadymade</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 <span>Krishna Readymade</span>. All rights reserved.</p>
+    <div class="payment-icons">
+      <span>ESEWA</span> · <span>KHALTI</span> · <span>CASH ON DELIVERY</span>
+    </div>
+  </div>
+</footer>
+
+<script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
+<script src="{% static 'js/index.js' %}?v=5" defer></script>
+</body>
+</html>

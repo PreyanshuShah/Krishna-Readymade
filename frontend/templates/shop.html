@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=4">
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>YOUR CART (<span id="cartCount">0</span>)</h3>
+    <button class="cart-close" id="cartClose">✕</button>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <span class="cart-empty-icon">🛍️</span>
+      <p>Your cart is empty</p>
+      <p class="cart-empty-note">Add items to get started</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total"><span>TOTAL</span><span>NPR <span id="cartTotal">0</span></span></div>
+    <button class="checkout-btn">ORDER VIA WHATSAPP / INSTAGRAM</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-img" id="modalImg">👕</div>
+    <div class="modal-content">
+      <div class="product-badge product-badge-inline badge-new" id="modalBadge">NEW</div>
+      <div class="modal-name" id="modalName">Premium Cotton Tee</div>
+      <div class="modal-price" id="modalPrice">NPR 1,299</div>
+      <div class="size-label">SELECT SIZE</div>
+      <div class="sizes" id="sizeSelector">
+        <button class="size-btn" data-size="XS">XS</button>
+        <button class="size-btn" data-size="S">S</button>
+        <button class="size-btn selected" data-size="M">M</button>
+        <button class="size-btn" data-size="L">L</button>
+        <button class="size-btn" data-size="XL">XL</button>
+        <button class="size-btn" data-size="XXL">XXL</button>
+      </div>
+      <div class="size-label size-label-spaced">PRODUCT DETAILS</div>
+      <p class="modal-details">Premium quality fabric, slim fit design. Breathable and comfortable for all-day wear. Machine washable.</p>
+      <button class="modal-add-btn" id="modalAddBtn">ADD TO CART</button>
+    </div>
+  </div>
+</div>
+
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="nav-icon" id="cartToggle">🛒<span class="cart-count" id="navCartCount">0</span></button>
+  </div>
+</nav>
+
+<section class="products" id="products" style="padding-top: 140px;">
+  <div class="section-header">
+    <span class="section-label">Handpicked For You</span>
+    <h2 class="section-title">TRENDING <em>NOW</em></h2>
+  </div>
+  <div class="filter-bar">
+    <span class="filter-label">FILTER:</span>
+    <button class="filter-btn active" data-filter-btn data-category="all">ALL</button>
+    <button class="filter-btn" data-filter-btn data-category="tshirts">T-SHIRTS</button>
+    <button class="filter-btn" data-filter-btn data-category="shirts">SHIRTS</button>
+    <button class="filter-btn" data-filter-btn data-category="jeans">JEANS</button>
+    <button class="filter-btn" data-filter-btn data-category="jackets">JACKETS</button>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
+<script src="{% static 'js/shop.js' %}?v=4" defer></script>
+</body>
+</html>

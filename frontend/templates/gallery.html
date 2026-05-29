@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/gallery.css' %}?v=4">
+</head>
+<body>
+
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'gallery' %}">Gallery</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions"><a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a></div>
+</nav>
+
+<section class="gallery" id="gallery" style="padding-top: 140px;">
+  <div class="section-header">
+    <span class="section-label">Style Inspo</span>
+    <h2 class="section-title">OUTFIT <em>GALLERY</em></h2>
+  </div>
+  <div class="insta-grid">
+    <div class="insta-cell"><div class="insta-bg i-bg-1">👔</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">1.2K likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-2">👕</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">987 likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-3">👖</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">2.1K likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-4">🧥</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">765 likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-5">👕</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">1.5K likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-6">👔</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">890 likes</span></div></div>
+    <div class="insta-cell"><div class="insta-bg i-bg-7">🧥</div><div class="insta-hover"><span class="insta-icon">❤️</span><span class="insta-likes">1.8K likes</span></div></div>
+  </div>
+  <div class="insta-follow-cta">
+    <span class="insta-handle">@KrishnaReadymade</span>
+    <p class="insta-follow-copy">Follow us for the latest drops, styling tips & exclusive offers</p>
+    <a href="https://instagram.com" target="_blank" class="btn-primary">FOLLOW ON INSTAGRAM</a>
+  </div>
+</section>
+
+<script src="{% static 'js/gallery.js' %}" defer></script>
+</body>
+</html>
