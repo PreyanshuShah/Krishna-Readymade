@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=1">
+</head>
+<body>
+<main class="auth-shell">
+  <section class="auth-panel">
+    <a class="auth-brand" href="{% url 'home' %}">Krishna<span>.</span></a>
+    <h1>Login</h1>
+    <p class="auth-copy">Browse freely. Login is only needed when you add products to your cart.</p>
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      {% if form.non_field_errors %}
+      <div class="auth-errors">{{ form.non_field_errors }}</div>
+      {% endif %}
+
+      <label>
+        Username
+        {{ form.username }}
+      </label>
+      <label>
+        Password
+        {{ form.password }}
+      </label>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="auth-switch">New here? <a href="{% url 'register' %}?next={{ next|urlencode }}">Create an account</a></p>
+  </section>
+</main>
+</body>
+</html>

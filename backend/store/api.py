@@ -1,13 +1,14 @@
-from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404, render
-from django.utils.text import slugify
 import json
-from .models import Product
+
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
+
+from .models import NewDrop, Product
 
 
-def _product_payload(product):
+def product_payload(product):
     old_price = product.old_price or product.price
     return {
         "id": product.id,
@@ -23,20 +24,43 @@ def _product_payload(product):
         "bg": product.bg,
         "emoji": product.emoji,
         "image_url": product.image.url if product.image else "",
+        "sizes": [size.strip() for size in product.sizes.split(",") if size.strip()],
+        "colors": [color.strip() for color in product.colors.split(",") if color.strip()],
+        "stock_status": product.stock_status,
         "is_active": product.is_active,
         "created_at": product.created_at,
         "updated_at": product.updated_at,
     }
 
 
-def _products_payload(include_inactive=False):
+def new_drop_payload(drop):
+    return {
+        "id": drop.id,
+        "title": drop.title,
+        "season": drop.season,
+        "season_code": drop.season_code,
+        "description": drop.description,
+        "features": drop.features,
+        "badge": drop.badge,
+        "visual_number": drop.visual_number,
+        "icon": drop.icon,
+        "button_text": drop.button_text,
+        "button_url": drop.button_url,
+        "image_url": drop.image.url if drop.image else "",
+        "is_active": drop.is_active,
+        "created_at": drop.created_at,
+        "updated_at": drop.updated_at,
+    }
+
+
+def products_payload(include_inactive=False):
     products = Product.objects.order_by("id")
     if not include_inactive:
         products = products.filter(is_active=True)
-    return [_product_payload(product) for product in products]
+    return [product_payload(product) for product in products]
 
 
-def _filter_products_queryset(request):
+def filter_products_queryset(request):
     products = Product.objects.order_by("id")
     include_inactive = request.GET.get("all") in {"1", "true", "yes"}
 
@@ -58,7 +82,7 @@ def _filter_products_queryset(request):
     return products
 
 
-def _read_json_body(request):
+def read_json_body(request):
     if not request.body:
         return {}
     try:
@@ -68,23 +92,23 @@ def _read_json_body(request):
     return payload if isinstance(payload, dict) else None
 
 
-def _read_product_payload(request):
+def read_product_payload(request):
     if request.content_type and request.content_type.startswith("multipart/form-data"):
         return request.POST
-    return _read_json_body(request)
+    return read_json_body(request)
 
 
-def _choice_values(choices):
+def choice_values(choices):
     return {value for value, _label in choices}
 
 
-def _staff_error(request):
+def staff_error(request):
     if request.user.is_authenticated and request.user.is_staff:
         return None
     return JsonResponse({"error": "Staff login required."}, status=403)
 
 
-def _unique_slug(name, product_id=None, requested_slug=""):
+def unique_slug(name, product_id=None, requested_slug=""):
     base_slug = slugify(requested_slug or name) or "product"
     candidate = base_slug
     suffix = 2
@@ -96,7 +120,7 @@ def _unique_slug(name, product_id=None, requested_slug=""):
     return candidate
 
 
-def _apply_product_payload(product, payload, partial=False):
+def apply_product_payload(product, payload, partial=False):
     errors = {}
 
     required_fields = ["name", "price"] if not partial else []
@@ -139,19 +163,19 @@ def _apply_product_payload(product, payload, partial=False):
 
     if "category" in payload or "cat" in payload:
         category = payload.get("category", payload.get("cat"))
-        if category not in _choice_values(Product.CATEGORY_CHOICES):
+        if category not in choice_values(Product.CATEGORY_CHOICES):
             errors["category"] = "Choose a valid category."
         else:
             product.category = category
 
     if "badge" in payload:
         badge = payload.get("badge") or ""
-        if badge not in _choice_values(Product.BADGE_CHOICES):
+        if badge not in choice_values(Product.BADGE_CHOICES):
             errors["badge"] = "Choose a valid badge."
         else:
             product.badge = badge
 
-    for field in ("icon", "bg", "emoji"):
+    for field in ("icon", "bg", "emoji", "sizes", "colors", "stock_status"):
         if field in payload:
             value = str(payload.get(field, "")).strip()
             if value:
@@ -164,68 +188,85 @@ def _apply_product_payload(product, payload, partial=False):
         return errors
 
     if "slug" in payload or not product.slug:
-        product.slug = _unique_slug(product.name, product.id, payload.get("slug", ""))
+        product.slug = unique_slug(product.name, product.id, payload.get("slug", ""))
     elif "name" in payload and not partial:
-        product.slug = _unique_slug(product.name, product.id)
+        product.slug = unique_slug(product.name, product.id)
 
     return {}
+
+
+def apply_new_drop_payload(drop, payload):
+    errors = {}
+
+    for field in ("title", "season", "season_code", "description", "features", "badge", "visual_number", "icon", "button_text", "button_url"):
+        if field in payload:
+            value = str(payload.get(field, "")).strip()
+            if field != "button_url" and not value:
+                errors[field] = "This field is required."
+            else:
+                setattr(drop, field, value)
+
+    if "is_active" in payload:
+        drop.is_active = str(payload["is_active"]).lower() in {"1", "true", "yes", "on"}
+
+    return errors
 
 
 def products_api(request):
     if request.method == "GET":
         return JsonResponse(
-            {"products": [_product_payload(product) for product in _filter_products_queryset(request)]},
+            {"products": [product_payload(product) for product in filter_products_queryset(request)]},
             encoder=DjangoJSONEncoder,
         )
 
     if request.method != "POST":
         return JsonResponse({"error": "Method not allowed."}, status=405)
 
-    staff_error = _staff_error(request)
-    if staff_error:
-        return staff_error
+    error_response = staff_error(request)
+    if error_response:
+        return error_response
 
-    payload = _read_product_payload(request)
+    payload = read_product_payload(request)
     if payload is None:
         return JsonResponse({"error": "Request body must be valid JSON or form data."}, status=400)
 
     product = Product()
-    errors = _apply_product_payload(product, payload)
+    errors = apply_product_payload(product, payload)
     if errors:
         return JsonResponse({"errors": errors}, status=400)
 
     if not product.slug:
-        product.slug = _unique_slug(product.name, product.id, payload.get("slug", ""))
+        product.slug = unique_slug(product.name, product.id, payload.get("slug", ""))
 
     if "image" in request.FILES:
         product.image = request.FILES["image"]
 
     product.save()
-    return JsonResponse(_product_payload(product), encoder=DjangoJSONEncoder, status=201)
+    return JsonResponse(product_payload(product), encoder=DjangoJSONEncoder, status=201)
 
 
 def product_detail_api(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
     if request.method == "GET":
-        return JsonResponse(_product_payload(product), encoder=DjangoJSONEncoder)
+        return JsonResponse(product_payload(product), encoder=DjangoJSONEncoder)
 
     if request.method not in {"POST", "PUT", "PATCH", "DELETE"}:
         return JsonResponse({"error": "Method not allowed."}, status=405)
 
-    staff_error = _staff_error(request)
-    if staff_error:
-        return staff_error
+    error_response = staff_error(request)
+    if error_response:
+        return error_response
 
     if request.method == "DELETE":
         product.delete()
         return HttpResponse(status=204)
 
-    payload = _read_product_payload(request)
+    payload = read_product_payload(request)
     if payload is None:
         return JsonResponse({"error": "Request body must be valid JSON or form data."}, status=400)
 
-    errors = _apply_product_payload(product, payload, partial=request.method == "PATCH")
+    errors = apply_product_payload(product, payload, partial=request.method == "PATCH")
     if errors:
         return JsonResponse({"errors": errors}, status=400)
 
@@ -233,43 +274,37 @@ def product_detail_api(request, product_id):
         product.image = request.FILES["image"]
 
     product.save()
-    return JsonResponse(_product_payload(product), encoder=DjangoJSONEncoder)
+    return JsonResponse(product_payload(product), encoder=DjangoJSONEncoder)
 
 
-def home(request):
-    context = {
-        "products_json": json.dumps(_products_payload(), cls=DjangoJSONEncoder),
-    }
-    return render(request, "index.html", context)
+def new_drop_api(request):
+    error_response = staff_error(request)
+    if error_response:
+        return error_response
 
+    drop = NewDrop.objects.filter(is_active=True).first() or NewDrop.objects.first()
 
-def collection(request):
-    return render(request, "collection.html")
+    if request.method == "GET":
+        if not drop:
+            drop = NewDrop.objects.create()
+        return JsonResponse({"drop": new_drop_payload(drop)}, encoder=DjangoJSONEncoder)
 
+    if request.method != "POST":
+        return JsonResponse({"error": "Method not allowed."}, status=405)
 
-def shop(request):
-    context = {
-        "products_json": json.dumps(_products_payload(), cls=DjangoJSONEncoder),
-    }
-    return render(request, "shop.html", context)
+    payload = read_product_payload(request)
+    if payload is None:
+        return JsonResponse({"error": "Request body must be valid JSON or form data."}, status=400)
 
+    if not drop:
+        drop = NewDrop()
 
-def new_drop(request):
-    return render(request, "new-drop.html")
+    errors = apply_new_drop_payload(drop, payload)
+    if errors:
+        return JsonResponse({"errors": errors}, status=400)
 
+    if "image" in request.FILES:
+        drop.image = request.FILES["image"]
 
-def gallery(request):
-    return render(request, "gallery.html")
-
-
-def about(request):
-    return render(request, "about.html")
-
-
-@staff_member_required
-def admin_products(request):
-    context = {
-        "category_choices": Product.CATEGORY_CHOICES,
-        "badge_choices": Product.BADGE_CHOICES,
-    }
-    return render(request, "admin-products.html", context)
+    drop.save()
+    return JsonResponse({"drop": new_drop_payload(drop)}, encoder=DjangoJSONEncoder)

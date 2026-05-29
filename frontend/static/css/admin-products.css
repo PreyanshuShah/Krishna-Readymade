@@ -3,7 +3,7 @@
   --muted: #676b79;
   --line: #e7e8ef;
   --line-strong: #d8dae5;
-  --paper: #f6f7fb;
+  --paper: #f8f9fc;
   --panel: #ffffff;
   --accent: #5b6cff;
   --accent-dark: #3f4ed6;
@@ -33,7 +33,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   max-width: 100%;
 }
@@ -84,22 +85,66 @@ select {
 
 .admin-shell {
   margin: 0 auto;
-  max-width: 1360px;
+  max-width: 1440px;
   padding: 32px;
 }
 
-.toolbar,
+.dashboard-hero,
+.summary-grid,
 .filters,
-.status-row,
-.content-grid {
+.content-grid,
+.section-card {
   width: 100%;
 }
 
-.toolbar {
-  align-items: end;
+.dashboard-hero {
+  align-items: center;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f8ff 100%);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  padding: 26px;
+}
+
+.hero-copy,
+.section-copy {
+  color: var(--muted);
+  margin: 8px 0 0;
+}
+
+.summary-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-bottom: 22px;
+}
+
+.summary-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  padding: 18px;
+}
+
+.summary-card span {
+  color: var(--muted);
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.summary-card strong {
+  color: var(--ink);
+  display: block;
+  font-size: 1.1rem;
+  line-height: 1.3;
 }
 
 .eyebrow {
@@ -190,16 +235,48 @@ h2 {
   width: 100%;
 }
 
-.filters {
-  align-items: end;
+.inline-link-btn {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-height: 40px;
+  text-decoration: none;
+}
+
+.section-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  padding: 22px;
+}
+
+.section-card-head {
+  align-items: start;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+}
+
+.compact-head {
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+}
+
+.filters {
+  align-items: end;
+  background: #fafbff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   display: grid;
   gap: 14px;
   grid-template-columns: minmax(220px, 1fr) 180px 160px 150px;
   padding: 18px;
+  margin-bottom: 18px;
 }
 
 label {
@@ -213,7 +290,8 @@ label {
 }
 
 input,
-select {
+select,
+textarea {
   background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -227,9 +305,16 @@ select {
 }
 
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 4px rgba(91, 108, 255, 0.13);
+}
+
+textarea {
+  min-height: 90px;
+  padding: 12px;
+  resize: vertical;
 }
 
 .check-row {
@@ -248,28 +333,19 @@ select:focus {
   width: 18px;
 }
 
-.status-row {
-  color: var(--muted);
-  display: flex;
-  font-size: 0.9rem;
-  justify-content: space-between;
-  min-height: 42px;
-  padding: 16px 6px 10px;
-}
-
 .content-grid {
   align-items: start;
   display: grid;
   gap: 22px;
-  grid-template-columns: minmax(0, 1fr) 360px;
+  grid-template-columns: minmax(0, 1fr) 390px;
 }
 
 .table-wrap,
 .editor {
-  background: var(--panel);
+  background: #ffffff;
   border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
 }
 
 .table-wrap {
@@ -448,9 +524,9 @@ tbody tr:hover {
 .editor {
   max-width: 100%;
   overflow: hidden;
-  padding: 20px;
+  padding: 18px;
   position: sticky;
-  top: 18px;
+  top: 84px;
 }
 
 .editor-head {
@@ -462,7 +538,7 @@ tbody tr:hover {
 
 form {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   max-width: 100%;
   min-width: 0;
 }
@@ -474,8 +550,54 @@ form {
   min-width: 0;
 }
 
+.drop-form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.panel-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+}
+
+.form-panel {
+  background: #fafbff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.form-panel h3 {
+  color: var(--ink);
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.compact-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.form-footer {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(180px, auto) minmax(0, 1fr) auto;
+  padding: 14px;
+}
+
 form label,
-.form-grid label {
+.form-grid label,
+.drop-form-grid label {
   min-width: 0;
   width: 100%;
 }
@@ -498,6 +620,16 @@ input[type="file"] {
   padding: 12px;
 }
 
+.inline-status {
+  background: #f8f9fd;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
+  padding: 12px;
+}
+
 .image-preview {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
@@ -513,11 +645,16 @@ input[type="file"] {
 
 @media (max-width: 980px) {
   .content-grid,
-  .filters {
+  .filters,
+  .drop-form-grid,
+  .panel-grid,
+  .summary-grid,
+  .form-footer {
     grid-template-columns: 1fr;
   }
 
-  .toolbar {
+  .dashboard-hero,
+  .section-card-head {
     align-items: start;
     flex-direction: column;
     gap: 16px;
@@ -545,7 +682,8 @@ input[type="file"] {
   }
 
   .toolbar-actions,
-  .form-grid {
+  .form-grid,
+  .drop-form-grid {
     grid-template-columns: 1fr;
     width: 100%;
   }
@@ -556,7 +694,8 @@ input[type="file"] {
 
   .filters,
   .table-wrap,
-  .editor {
+  .editor,
+  .section-card {
     border-radius: var(--radius-md);
   }
 }

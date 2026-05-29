@@ -1,4 +1,5 @@
 const apiBase = "/api/products/";
+const newDropApiBase = "/api/new-drop/";
 const rowsEl = document.getElementById("productRows");
 const emptyState = document.getElementById("emptyState");
 const statusText = document.getElementById("statusText");
@@ -16,10 +17,31 @@ const fields = {
   icon: document.getElementById("iconInput"),
   emoji: document.getElementById("emojiInput"),
   bg: document.getElementById("bgInput"),
+  sizes: document.getElementById("sizesInput"),
+  colors: document.getElementById("colorsInput"),
+  stockStatus: document.getElementById("stockStatusInput"),
   image: document.getElementById("imageInput"),
   isActive: document.getElementById("activeInput")
 };
 const imagePreview = document.getElementById("imagePreview");
+const dropForm = document.getElementById("newDropForm");
+const dropFormErrors = document.getElementById("dropFormErrors");
+const dropStatusText = document.getElementById("dropStatusText");
+const dropFields = {
+  title: document.getElementById("dropTitleInput"),
+  season: document.getElementById("dropSeasonInput"),
+  seasonCode: document.getElementById("dropSeasonCodeInput"),
+  description: document.getElementById("dropDescriptionInput"),
+  features: document.getElementById("dropFeaturesInput"),
+  badge: document.getElementById("dropBadgeInput"),
+  visualNumber: document.getElementById("dropVisualNumberInput"),
+  icon: document.getElementById("dropIconInput"),
+  buttonText: document.getElementById("dropButtonTextInput"),
+  buttonUrl: document.getElementById("dropButtonUrlInput"),
+  image: document.getElementById("dropImageInput"),
+  isActive: document.getElementById("dropActiveInput")
+};
+const dropImagePreview = document.getElementById("dropImagePreview");
 const filters = {
   search: document.getElementById("searchInput"),
   category: document.getElementById("categoryFilter"),
@@ -46,6 +68,10 @@ function setStatus(message) {
   statusText.textContent = message;
 }
 
+function setDropStatus(message) {
+  dropStatusText.textContent = message;
+}
+
 function setErrors(errors) {
   if (!errors) {
     formErrors.hidden = true;
@@ -61,6 +87,23 @@ function setErrors(errors) {
       .join("");
   }
   formErrors.hidden = false;
+}
+
+function setDropErrors(errors) {
+  if (!errors) {
+    dropFormErrors.hidden = true;
+    dropFormErrors.textContent = "";
+    return;
+  }
+
+  if (typeof errors === "string") {
+    dropFormErrors.textContent = errors;
+  } else {
+    dropFormErrors.innerHTML = Object.entries(errors)
+      .map(([field, message]) => `<div>${field}: ${message}</div>`)
+      .join("");
+  }
+  dropFormErrors.hidden = false;
 }
 
 async function requestJson(url, options = {}) {
@@ -154,6 +197,17 @@ function setImagePreview(src, alt = "Product image") {
   imagePreview.hidden = false;
 }
 
+function setDropImagePreview(src, alt = "New drop image") {
+  if (!src) {
+    dropImagePreview.hidden = true;
+    dropImagePreview.innerHTML = "";
+    return;
+  }
+
+  dropImagePreview.innerHTML = `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}">`;
+  dropImagePreview.hidden = false;
+}
+
 function renderRows() {
   rowsEl.innerHTML = products.map((product) => `
     <tr>
@@ -167,7 +221,10 @@ function renderRows() {
         </div>
       </td>
       <td>${escapeHtml(product.category)}</td>
-      <td>${formatMoney(product.price)}</td>
+      <td>
+        <div>${formatMoney(product.price)}</div>
+        <div class="product-slug">${escapeHtml(product.stock_status || "In stock")}</div>
+      </td>
       <td>${product.badge ? `<span class="badge">${escapeHtml(product.badge)}</span>` : "-"}</td>
       <td><span class="state ${product.is_active ? "active" : "inactive"}">${product.is_active ? "Active" : "Inactive"}</span></td>
       <td>
@@ -198,6 +255,32 @@ async function loadProducts() {
   }
 }
 
+async function loadNewDrop() {
+  setDropStatus("Loading New Drop details...");
+  try {
+    const data = await requestJson(newDropApiBase);
+    const drop = data.drop || {};
+    dropFields.title.value = drop.title || "THE BOLD\nCOLLECTION";
+    dropFields.season.value = drop.season || "Summer Season 2025";
+    dropFields.seasonCode.value = drop.season_code || "SS 2025";
+    dropFields.description.value = drop.description || "";
+    dropFields.features.value = drop.features || "";
+    dropFields.badge.value = drop.badge || "EXCLUSIVE DROP";
+    dropFields.visualNumber.value = drop.visual_number || "25";
+    dropFields.icon.value = drop.icon || "F";
+    dropFields.buttonText.value = drop.button_text || "SHOP THE DROP";
+    dropFields.buttonUrl.value = drop.button_url || "";
+    dropFields.image.value = "";
+    dropFields.isActive.checked = drop.is_active !== false;
+    setDropImagePreview(drop.image_url, drop.title || "New drop image");
+    setDropErrors(null);
+    setDropStatus("New Drop details loaded.");
+  } catch (error) {
+    setDropErrors(error.message);
+    setDropStatus("Could not load New Drop details.");
+  }
+}
+
 function clearForm() {
   productId.value = "";
   form.reset();
@@ -206,6 +289,9 @@ function clearForm() {
   fields.icon.value = "T";
   fields.emoji.value = "K";
   fields.bg.value = "p-bg-1";
+  fields.sizes.value = "XS,S,M,L,XL,XXL";
+  fields.colors.value = "Black,White,Navy";
+  fields.stockStatus.value = "In stock";
   fields.image.value = "";
   fields.isActive.checked = true;
   formTitle.textContent = "New Product";
@@ -229,6 +315,9 @@ function editProduct(id) {
   fields.icon.value = product.icon || "T";
   fields.emoji.value = product.emoji || "K";
   fields.bg.value = product.bg || "p-bg-1";
+  fields.sizes.value = Array.isArray(product.sizes) ? product.sizes.join(",") : product.sizes || "XS,S,M,L,XL,XXL";
+  fields.colors.value = Array.isArray(product.colors) ? product.colors.join(",") : product.colors || "Black,White,Navy";
+  fields.stockStatus.value = product.stock_status || "In stock";
   fields.image.value = "";
   fields.isActive.checked = Boolean(product.is_active);
   formTitle.textContent = `Edit #${product.id}`;
@@ -246,6 +335,9 @@ function getPayload() {
     icon: fields.icon.value.trim() || "T",
     emoji: fields.emoji.value.trim() || "K",
     bg: fields.bg.value,
+    sizes: fields.sizes.value.trim() || "XS,S,M,L,XL,XXL",
+    colors: fields.colors.value.trim() || "Black,White,Navy",
+    stock_status: fields.stockStatus.value.trim() || "In stock",
     is_active: fields.isActive.checked
   };
 }
@@ -257,6 +349,9 @@ function getFormData() {
   formData.set("price", fields.price.value);
   formData.set("icon", fields.icon.value.trim() || "T");
   formData.set("emoji", fields.emoji.value.trim() || "K");
+  formData.set("sizes", fields.sizes.value.trim() || "XS,S,M,L,XL,XXL");
+  formData.set("colors", fields.colors.value.trim() || "Black,White,Navy");
+  formData.set("stock_status", fields.stockStatus.value.trim() || "In stock");
   formData.set("is_active", fields.isActive.checked ? "1" : "0");
   return formData;
 }
@@ -279,6 +374,42 @@ async function saveProduct(event) {
   } catch (error) {
     setErrors(error.payload && error.payload.errors ? error.payload.errors : error.message);
     setStatus("Could not save product.");
+  }
+}
+
+function getDropFormData() {
+  const formData = new FormData(dropForm);
+  formData.set("title", dropFields.title.value.trim());
+  formData.set("season", dropFields.season.value.trim());
+  formData.set("season_code", dropFields.seasonCode.value.trim());
+  formData.set("description", dropFields.description.value.trim());
+  formData.set("features", dropFields.features.value.trim());
+  formData.set("badge", dropFields.badge.value.trim());
+  formData.set("visual_number", dropFields.visualNumber.value.trim());
+  formData.set("icon", dropFields.icon.value.trim());
+  formData.set("button_text", dropFields.buttonText.value.trim());
+  formData.set("button_url", dropFields.buttonUrl.value.trim());
+  formData.set("is_active", dropFields.isActive.checked ? "1" : "0");
+  return formData;
+}
+
+async function saveNewDrop(event) {
+  event.preventDefault();
+  setDropErrors(null);
+  setDropStatus("Saving New Drop details...");
+
+  try {
+    const data = await requestForm(newDropApiBase, getDropFormData());
+    const drop = data.drop || {};
+    dropFields.image.value = "";
+    setDropImagePreview(drop.image_url, drop.title || "New drop image");
+    await loadNewDrop();
+    setDropStatus("New Drop details saved. Open View Page to see it.");
+    setStatus("New Drop details saved.");
+  } catch (error) {
+    setDropErrors(error.payload && error.payload.errors ? error.payload.errors : error.message);
+    setDropStatus("Could not save New Drop details.");
+    setStatus("Could not save New Drop details.");
   }
 }
 
@@ -341,9 +472,14 @@ rowsEl.addEventListener("click", (event) => {
 });
 
 form.addEventListener("submit", saveProduct);
+dropForm.addEventListener("submit", saveNewDrop);
 fields.image.addEventListener("change", () => {
   const file = fields.image.files[0];
   setImagePreview(file ? URL.createObjectURL(file) : "");
+});
+dropFields.image.addEventListener("change", () => {
+  const file = dropFields.image.files[0];
+  setDropImagePreview(file ? URL.createObjectURL(file) : "");
 });
 document.getElementById("clearFormBtn").addEventListener("click", clearForm);
 document.getElementById("newProductBtn").addEventListener("click", clearForm);
@@ -354,3 +490,4 @@ Object.values(filters).forEach((field) => {
 });
 
 loadProducts();
+loadNewDrop();

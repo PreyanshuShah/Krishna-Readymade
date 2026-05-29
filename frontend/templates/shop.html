@@ -7,9 +7,9 @@
 <title>Shop | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=6">
 </head>
-<body>
+<body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-follower" id="cursorFollower"></div>
@@ -67,6 +67,13 @@
     <li><a href="{% url 'about' %}">About</a></li>
   </ul>
   <div class="nav-actions">
+    {% if request.user.is_authenticated %}
+    <span class="nav-user">{{ request.user.username }}</span>
+    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
+    {% else %}
+    <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
+    <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
+    {% endif %}
     <button class="nav-icon" id="cartToggle">🛒<span class="cart-count" id="navCartCount">0</span></button>
   </div>
 </nav>
@@ -88,6 +95,6 @@
 </section>
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
-<script src="{% static 'js/shop.js' %}?v=4" defer></script>
+<script src="{% static 'js/shop.js' %}?v=6" defer></script>
 </body>
 </html>

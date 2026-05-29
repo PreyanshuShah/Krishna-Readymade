@@ -25,6 +25,7 @@ function getBackendProducts() {
     return parsed.map((item, index) => ({
       id: Number(item.id ?? index + 1),
       name: item.name ?? "Product",
+      slug: item.slug ?? `product-${item.id ?? index + 1}`,
       price: Number(item.price ?? 0),
       old: Number(item.old ?? item.old_price ?? item.price ?? 0),
       cat: normalizeCategory(item.cat ?? item.category ?? "tshirts"),
@@ -32,7 +33,10 @@ function getBackendProducts() {
       icon: item.icon ?? "👕",
       bg: item.bg ?? "p-bg-1",
       emoji: item.emoji ?? "🖤",
-      imageUrl: item.image_url ?? item.imageUrl ?? ""
+      imageUrl: item.image_url ?? item.imageUrl ?? "",
+      sizes: item.sizes ?? ["XS", "S", "M", "L", "XL", "XXL"],
+      colors: item.colors ?? ["Black", "White", "Navy"],
+      stockStatus: item.stock_status ?? item.stockStatus ?? "In stock"
     }));
   } catch (error) {
     console.warn("Invalid productsData JSON, using default products.", error);
@@ -65,6 +69,8 @@ const filterButtons = document.querySelectorAll("[data-filter-btn]");
 const cursor = document.getElementById("cursor");
 const follower = document.getElementById("cursorFollower");
 const countdownTarget = new Date();
+const isAuthenticated = document.body.dataset.authenticated === "true";
+const loginUrl = document.body.dataset.loginUrl || "/login/";
 
 function on(id, eventName, handler) {
   const element = document.getElementById(id);
@@ -99,12 +105,12 @@ function normalizeCategory(category) {
 
 function renderProductImage(product) {
   if (product.imageUrl) {
-    return `<img class="product-photo" src="${product.imageUrl}" alt="${product.name}">`;
+    return `<img class="product-photo" src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}">`;
   }
 
   return `
     <div class="product-img-inner ${product.bg} product-placeholder">
-      <span class="product-icon">${product.icon}</span>
+      <span class="product-icon">${escapeHtml(product.icon)}</span>
       <span class="product-code">KR-${String(product.id).padStart(3, "0")}</span>
     </div>
   `;
@@ -116,6 +122,64 @@ function renderCartImage(product) {
   }
 
   return product.icon;
+}
+
+function requireLogin() {
+  if (isAuthenticated) {
+    return true;
+  }
+
+  const next = `${window.location.pathname}${window.location.search}`;
+  window.location.href = `${loginUrl}?next=${encodeURIComponent(next)}`;
+  return false;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function categoryLabel(category) {
+  const labels = {
+    tshirts: "T-Shirt",
+    shirts: "Shirt",
+    jeans: "Jeans",
+    jackets: "Jacket"
+  };
+  return labels[category] || "Product";
+}
+
+function colorToCss(color) {
+  const namedColors = {
+    black: "#111111",
+    white: "#ffffff",
+    navy: "#1f2a44",
+    blue: "#2d5f9a",
+    red: "#b42318",
+    brown: "#8a5a33",
+    green: "#2f7d50",
+    grey: "#767676",
+    gray: "#767676",
+    cream: "#f3ead7",
+    beige: "#d8c3a5"
+  };
+  return namedColors[String(color).trim().toLowerCase()] || "#c9a84c";
+}
+
+function renderColorSwatches(colors = []) {
+  return colors.slice(0, 4).map((color) => `
+    <span class="color-swatch" style="background:${colorToCss(color)}" title="${escapeHtml(color)}"></span>
+  `).join("");
+}
+
+function renderSizeChips(sizes = []) {
+  return sizes.slice(0, 4).map((size) => `
+    <span class="size-chip">${escapeHtml(size)}</span>
+  `).join("");
 }
 
 function renderProducts(filter = "all") {
@@ -130,17 +194,26 @@ function renderProducts(filter = "all") {
     <div class="product-card" data-id="${product.id}">
       <div class="product-img">
         ${renderProductImage(product)}
-        ${product.badge ? `<div class="product-badge badge-${product.badge}">${product.badge.toUpperCase()}</div>` : ""}
+        <div class="product-img-shade"></div>
+        ${product.badge ? `<div class="product-badge badge-${escapeHtml(product.badge)}">${escapeHtml(product.badge.toUpperCase())}</div>` : ""}
         <button class="product-wishlist ${wishlist.includes(product.id) ? "active" : ""}" data-action="toggle-wishlist" data-id="${product.id}">${wishlist.includes(product.id) ? "♥" : "♡"}</button>
         <button class="quick-view" data-action="open-modal" data-id="${product.id}">QUICK VIEW</button>
       </div>
       <div class="product-info">
-        <div class="product-name">${product.name}</div>
+        <div class="product-meta-row">
+          <span class="product-category">${categoryLabel(product.cat)}</span>
+          <span class="product-stock">${escapeHtml(product.stockStatus || "In stock")}</span>
+        </div>
+        <div class="product-name"><a href="/products/${escapeHtml(product.slug)}/">${escapeHtml(product.name)}</a></div>
+        <div class="product-options">
+          <div class="size-chips">${renderSizeChips(product.sizes)}</div>
+          <div class="color-swatches">${renderColorSwatches(product.colors)}</div>
+        </div>
         <div class="product-price-row">
           <div>
             <span class="product-price">NPR ${product.price.toLocaleString()}</span>
           </div>
-          <button class="add-cart-btn" data-action="add-cart" data-id="${product.id}">🛒</button>
+          <button class="add-cart-btn" data-action="add-cart" data-id="${product.id}" title="Add to cart">🛒</button>
         </div>
       </div>
     </div>
@@ -168,6 +241,7 @@ async function hydrateProductsFromApi() {
     products = list.map((item, index) => ({
       id: Number(item.id ?? index + 1),
       name: item.name ?? "Product",
+      slug: item.slug ?? `product-${item.id ?? index + 1}`,
       price: Number(item.price ?? 0),
       old: Number(item.old ?? item.old_price ?? item.price ?? 0),
       cat: normalizeCategory(item.cat ?? item.category ?? "tshirts"),
@@ -175,7 +249,10 @@ async function hydrateProductsFromApi() {
       icon: item.icon ?? "👕",
       bg: item.bg ?? "p-bg-1",
       emoji: item.emoji ?? "🖤",
-      imageUrl: item.image_url ?? item.imageUrl ?? ""
+      imageUrl: item.image_url ?? item.imageUrl ?? "",
+      sizes: item.sizes ?? ["XS", "S", "M", "L", "XL", "XXL"],
+      colors: item.colors ?? ["Black", "White", "Navy"],
+      stockStatus: item.stock_status ?? item.stockStatus ?? "In stock"
     }));
 
     renderProducts();
@@ -215,6 +292,10 @@ function toggleWishlist(id, button) {
 }
 
 function addToCart(id, size = "M") {
+  if (!requireLogin()) {
+    return;
+  }
+
   const product = products.find((item) => item.id === id);
 
   if (!product) {
@@ -258,6 +339,10 @@ function buildOrderMessage() {
 }
 
 function handleCheckout() {
+  if (!requireLogin()) {
+    return;
+  }
+
   if (!cart.length) {
     window.alert("Your cart is empty. Please add products first.");
     return;
@@ -317,6 +402,10 @@ function renderCartItems() {
 }
 
 function openCart() {
+  if (!requireLogin()) {
+    return;
+  }
+
   if (!cartDrawer || !drawerOverlay) {
     return;
   }
@@ -396,6 +485,12 @@ function openModal(id) {
     modalImg.style.fontSize = "5rem";
   }
   updateModalBadge(product);
+  const detailText = document.querySelector(".modal-details");
+  if (detailText) {
+    const sizes = Array.isArray(product.sizes) ? product.sizes.join(", ") : product.sizes;
+    const colors = Array.isArray(product.colors) ? product.colors.join(", ") : product.colors;
+    detailText.textContent = `Sizes: ${sizes || "M"} | Colors: ${colors || "Standard"} | Stock: ${product.stockStatus || "In stock"}`;
+  }
   resetSelectedSize();
   modalOverlay.classList.add("show");
 }

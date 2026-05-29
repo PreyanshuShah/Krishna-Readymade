@@ -21,7 +21,7 @@ html {
 }
 
 body {
-  background: #ffffff;
+  background: #fffafa;
   color: #17181f;
   font-family: "DM Sans", sans-serif;
   overflow-x: hidden;
@@ -243,6 +243,20 @@ nav.scrolled {
   gap: 20px;
 }
 
+.nav-auth-link,
+.nav-user {
+  color: #17181f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.nav-auth-link:hover {
+  color: var(--gold);
+}
+
 .nav-icon {
   background: none;
   border: none;
@@ -303,7 +317,7 @@ nav.scrolled {
 .hero-bg {
   position: absolute;
   inset: 0;
-  background: #ffffff;
+  background: #fffafa;
 }
 
 .hero-bg::before {
@@ -826,7 +840,7 @@ nav.scrolled {
 /* PRODUCTS */
 .products {
   padding: 80px 5%;
-  background: #ffffff;
+  background: #fffafa;
 }
 
 .filter-bar {
@@ -1196,7 +1210,7 @@ nav.scrolled {
 /* INSTAGRAM GALLERY */
 .gallery {
   padding: 80px 5%;
-  background: #ffffff;
+  background: #fffafa;
 }
 
 .insta-grid {
@@ -1401,7 +1415,7 @@ nav.scrolled {
 
 /* CONTACT / FOOTER */
 footer {
-  background: #ffffff;
+  background: #fffafa;
   border-top: 1px solid #e7e8ef;
 }
 

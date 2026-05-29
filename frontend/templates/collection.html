@@ -7,7 +7,7 @@
 <title>Collection | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/collection.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/collection.css' %}?v=5">
 </head>
 <body>
 
@@ -21,6 +21,13 @@
     <li><a href="{% url 'about' %}">About</a></li>
   </ul>
   <div class="nav-actions">
+    {% if request.user.is_authenticated %}
+    <span class="nav-user">{{ request.user.username }}</span>
+    <a href="{% url 'logout' %}" class="nav-auth-link">Logout</a>
+    {% else %}
+    <a href="{% url 'login' %}" class="nav-auth-link">Login</a>
+    <a href="{% url 'register' %}" class="nav-auth-link">Register</a>
+    {% endif %}
     <a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a>
   </div>
 </nav>

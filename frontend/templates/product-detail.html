@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ product.name }} | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=6">
+</head>
+<body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    {% if request.user.is_authenticated %}
+    <span class="nav-user">{{ request.user.username }}</span>
+    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
+    {% else %}
+    <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
+    <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
+    {% endif %}
+    <a href="{% url 'shop' %}" class="btn-primary">SHOP</a>
+  </div>
+</nav>
+
+<main class="product-detail-page">
+  <section class="product-detail-media">
+    {% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% else %}
+    <div class="product-img-inner {{ product.bg }} product-placeholder">
+      <span class="product-icon">{{ product.icon }}</span>
+      <span class="product-code">KR-{{ product.id|stringformat:"03d" }}</span>
+    </div>
+    {% endif %}
+  </section>
+  <section class="product-detail-info">
+    {% if product.badge %}<div class="product-badge product-badge-inline badge-{{ product.badge }}">{{ product.badge }}</div>{% endif %}
+    <h1>{{ product.name }}</h1>
+    <div class="modal-price">NPR {{ product.price }}</div>
+    <dl class="product-meta-list">
+      <div><dt>Sizes</dt><dd>{{ sizes|join:", " }}</dd></div>
+      <div><dt>Colors</dt><dd>{{ colors|join:", " }}</dd></div>
+      <div><dt>Stock</dt><dd>{{ product.stock_status }}</dd></div>
+    </dl>
+    <a class="btn-primary" href="{% url 'login' %}?next={{ request.path|urlencode }}">Login to Add to Cart</a>
+  </section>
+</main>
+</body>
+</html>

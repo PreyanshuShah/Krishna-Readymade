@@ -7,9 +7,9 @@
 <title>Krishna Readymade – Style That Defines You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/index.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=8">
 </head>
-<body>
+<body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
 <div class="cursor" id="cursor"></div>
 <div class="cursor-follower" id="cursorFollower"></div>
@@ -80,6 +80,13 @@
     <li><a href="{% url 'about' %}">About</a></li>
   </ul>
   <div class="nav-actions">
+    {% if request.user.is_authenticated %}
+    <span class="nav-user">{{ request.user.username }}</span>
+    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
+    {% else %}
+    <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
+    <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
+    {% endif %}
     <button class="nav-icon" title="Search">🔍</button>
     <button class="nav-icon" title="Wishlist">♡</button>
     <button class="nav-icon" id="cartToggle" title="Cart">
@@ -209,26 +216,29 @@
 <section class="new-drop" id="new-drop">
   <div class="drop-visual reveal-left">
     <div class="drop-frame">
-      <div class="drop-frame-inner">
+      <div class="drop-frame-inner{% if drop.image_url %} has-image{% endif %}">
+        {% if drop.image_url %}
+        <img class="drop-image" src="{{ drop.image_url }}" alt="{{ drop.title|striptags }}">
+        {% else %}
         <div class="drop-pattern"></div>
-        <div class="drop-number">25</div>
+        <div class="drop-number">{{ drop.visual_number }}</div>
         <div class="drop-center-stack">
-          <div class="drop-emoji">🔥</div>
-          <div class="drop-season-code">SS 2025</div>
+          <div class="drop-emoji">{{ drop.icon }}</div>
+          <div class="drop-season-code">{{ drop.season_code }}</div>
         </div>
+        {% endif %}
       </div>
-      <div class="drop-tag-float">EXCLUSIVE DROP</div>
+      <div class="drop-tag-float">{{ drop.badge }}</div>
     </div>
   </div>
   <div class="drop-content reveal-right">
-    <span class="drop-season">✦ Summer Season 2025</span>
-    <h2 class="drop-title">THE BOLD<br>COLLECTION</h2>
-    <p class="drop-desc">Crafted for those who don't follow trends — they set them. The Krishna SS25 collection blends streetwear edge with everyday comfort, giving you looks that turn heads.</p>
+    <span class="drop-season">{{ drop.season }}</span>
+    <h2 class="drop-title">{{ drop.title|linebreaksbr }}</h2>
+    <p class="drop-desc">{{ drop.description }}</p>
     <div class="drop-features">
-      <div class="drop-feature">Premium breathable fabric</div>
-      <div class="drop-feature">Limited edition colorways</div>
-      <div class="drop-feature">Sizes XS to XXL available</div>
-      <div class="drop-feature">Affordable luxury pricing</div>
+      {% for feature in drop.features %}
+      <div class="drop-feature">{{ feature }}</div>
+      {% endfor %}
     </div>
     <div class="drop-countdown">
       <div class="countdown-item">
@@ -248,7 +258,7 @@
         <span class="countdown-label">SECS</span>
       </div>
     </div>
-    <a href="{% url 'shop' %}" class="btn-primary">SHOP THE DROP</a>
+    <a href="{{ drop.button_url }}" class="btn-primary">{{ drop.button_text }}</a>
   </div>
 </section>
 
@@ -363,6 +373,6 @@
 </footer>
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
-<script src="{% static 'js/index.js' %}?v=5" defer></script>
+<script src="{% static 'js/index.js' %}?v=7" defer></script>
 </body>
 </html>
