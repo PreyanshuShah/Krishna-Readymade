@@ -3,7 +3,7 @@ import json
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from .models import NewDrop, Product
+from .models import CartItem, NewDrop, Product
 
 
 class ProductApiTests(TestCase):
@@ -59,6 +59,14 @@ class ProductApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.product.name)
         self.assertContains(response, "In stock")
+
+    def test_collection_page_contains_active_products_and_category_counts(self):
+        response = self.client.get("/collection/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Slim Fit Graphic Tee")
+        self.assertContains(response, "1 STYLE")
+        self.assertNotContains(response, "Hidden Shirt")
 
     def test_public_can_open_new_drop_page_with_default_content(self):
         response = self.client.get("/new-drop/")
@@ -208,6 +216,61 @@ class ProductApiTests(TestCase):
 
         self.assertEqual(response.status_code, 403)
 
+    def test_public_cannot_access_cart_api(self):
+        response = self.client.get("/api/cart/")
+
+        self.assertEqual(response.status_code, 403)
+
+    def test_authenticated_user_cart_is_saved_in_database(self):
+        self.client.force_login(self.staff_user)
+
+        add_response = self.client.post(
+            "/api/cart/",
+            data=json.dumps({"product_id": self.product.id, "size": "M", "quantity": 2}),
+            content_type="application/json",
+        )
+        get_response = self.client.get("/api/cart/")
+
+        self.assertEqual(add_response.status_code, 200)
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.json()["items"][0]["name"], self.product.name)
+        self.assertEqual(get_response.json()["items"][0]["size"], "M")
+        self.assertEqual(get_response.json()["items"][0]["qty"], 2)
+
+    def test_authenticated_user_can_remove_cart_item(self):
+        self.client.force_login(self.staff_user)
+        self.client.post(
+            "/api/cart/",
+            data=json.dumps({"product_id": self.product.id, "size": "L", "quantity": 1}),
+            content_type="application/json",
+        )
+
+        response = self.client.delete(
+            "/api/cart/",
+            data=json.dumps({"product_id": self.product.id, "size": "L"}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["items"], [])
+
+    def test_cart_page_requires_login(self):
+        response = self.client.get("/cart/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_authenticated_user_can_open_cart_page(self):
+        self.client.force_login(self.staff_user)
+        CartItem.objects.create(user=self.staff_user, product=self.product, size="M", quantity=2)
+
+        response = self.client.get("/cart/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Shopping Cart")
+        self.assertContains(response, self.product.name)
+        self.assertContains(response, "NPR 2598")
+
     def test_admin_products_page_requires_staff_login(self):
         response = self.client.get("/admin-products/")
 
@@ -220,6 +283,40 @@ class ProductApiTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Products")
+
+    def test_staff_can_open_admin_product_add_page(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get("/dashboard/products/add/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Add Product")
+
+    def test_staff_can_open_admin_product_edit_page(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get(f"/dashboard/products/{self.product.id}/edit/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Edit Product")
+
+    def test_admin_product_add_page_requires_staff_login(self):
+        response = self.client.get("/dashboard/products/add/")
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_staff_can_open_admin_new_drop_page(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get("/dashboard/new-drop/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "New Drop Details")
+
+    def test_admin_new_drop_page_requires_staff_login(self):
+        response = self.client.get("/dashboard/new-drop/")
+
+        self.assertEqual(response.status_code, 302)
 
     def test_public_can_open_login_and_register_pages(self):
         login_response = self.client.get("/login/")

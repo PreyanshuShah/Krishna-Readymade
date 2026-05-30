@@ -7,7 +7,7 @@
 <title>Collection | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/collection.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/collection.css' %}?v=7">
 </head>
 <body>
 
@@ -38,25 +38,35 @@
     <h2 class="section-title">OUR <em>COLLECTIONS</em></h2>
   </div>
   <div class="cat-grid">
-    <div class="cat-card" data-filter="shirts">
-      <div class="cat-bg"><div class="cat-bg-inner cat-bg-1"><span class="cat-icon">👔</span></div></div>
-      <div class="cat-overlay"><div class="cat-name">SHIRTS</div><div class="cat-count">24 STYLES</div></div>
-    </div>
-    <div class="cat-card" data-filter="tshirts">
-      <div class="cat-bg"><div class="cat-bg-inner cat-bg-2"><span class="cat-icon">👕</span></div></div>
-      <div class="cat-overlay"><div class="cat-name">T-SHIRTS</div><div class="cat-count">36 STYLES</div></div>
-    </div>
-    <div class="cat-card" data-filter="jeans">
-      <div class="cat-bg"><div class="cat-bg-inner cat-bg-3"><span class="cat-icon">👖</span></div></div>
-      <div class="cat-overlay"><div class="cat-name">JEANS</div><div class="cat-count">18 STYLES</div></div>
-    </div>
-    <div class="cat-card" data-filter="jackets">
-      <div class="cat-bg"><div class="cat-bg-inner cat-bg-4"><span class="cat-icon">🧥</span></div></div>
-      <div class="cat-overlay"><div class="cat-name">JACKETS</div><div class="cat-count">12 STYLES</div></div>
-    </div>
+    {% for category in categories %}
+    <button class="cat-card" type="button" data-filter="{{ category.value }}">
+      <div class="cat-bg"><div class="cat-bg-inner {{ category.background }}"><span class="cat-icon">{{ category.icon }}</span></div></div>
+      <div class="cat-overlay">
+        <div class="cat-name">{{ category.label }}</div>
+        <div class="cat-count">{{ category.count }} STYLE{{ category.count|pluralize }}</div>
+      </div>
+    </button>
+    {% endfor %}
   </div>
 </section>
 
-<script src="{% static 'js/collection.js' %}" defer></script>
+<section class="products collection-products" id="collectionProducts" data-selected-category="{{ selected_category }}">
+  <div class="collection-results-bar">
+    <div>
+      <span class="section-label">Selected Category</span>
+      <h2 id="collectionTitle">Choose a collection</h2>
+    </div>
+    <a class="collection-shop-link" href="{% url 'shop' %}">View Full Shop</a>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+  <div class="collection-empty" id="collectionEmpty">
+    <h3>Select a category above</h3>
+    <p>Products from that collection will appear here.</p>
+  </div>
+</section>
+
+<script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
+<script src="{% static 'js/components/product-card.js' %}?v=2" defer></script>
+<script src="{% static 'js/collection.js' %}?v=3" defer></script>
 </body>
 </html>

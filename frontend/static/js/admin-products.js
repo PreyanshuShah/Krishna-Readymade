@@ -65,14 +65,23 @@ function getCsrfToken() {
 }
 
 function setStatus(message) {
+  if (!statusText) {
+    return;
+  }
   statusText.textContent = message;
 }
 
 function setDropStatus(message) {
+  if (!dropStatusText) {
+    return;
+  }
   dropStatusText.textContent = message;
 }
 
 function setErrors(errors) {
+  if (!formErrors) {
+    return;
+  }
   if (!errors) {
     formErrors.hidden = true;
     formErrors.textContent = "";
@@ -90,6 +99,9 @@ function setErrors(errors) {
 }
 
 function setDropErrors(errors) {
+  if (!dropFormErrors) {
+    return;
+  }
   if (!errors) {
     dropFormErrors.hidden = true;
     dropFormErrors.textContent = "";
@@ -166,6 +178,10 @@ function buildListUrl() {
   return `${apiBase}?${params.toString()}`;
 }
 
+function productEditUrl(id) {
+  return `/dashboard/products/${encodeURIComponent(id)}/edit/`;
+}
+
 function formatMoney(value) {
   return `NPR ${Number(value || 0).toLocaleString()}`;
 }
@@ -187,6 +203,9 @@ function renderProductMedia(product) {
 }
 
 function setImagePreview(src, alt = "Product image") {
+  if (!imagePreview) {
+    return;
+  }
   if (!src) {
     imagePreview.hidden = true;
     imagePreview.innerHTML = "";
@@ -198,6 +217,9 @@ function setImagePreview(src, alt = "Product image") {
 }
 
 function setDropImagePreview(src, alt = "New drop image") {
+  if (!dropImagePreview) {
+    return;
+  }
   if (!src) {
     dropImagePreview.hidden = true;
     dropImagePreview.innerHTML = "";
@@ -209,6 +231,9 @@ function setDropImagePreview(src, alt = "New drop image") {
 }
 
 function renderRows() {
+  if (!rowsEl || !emptyState || !countText) {
+    return;
+  }
   rowsEl.innerHTML = products.map((product) => `
     <tr>
       <td>
@@ -229,7 +254,7 @@ function renderRows() {
       <td><span class="state ${product.is_active ? "active" : "inactive"}">${product.is_active ? "Active" : "Inactive"}</span></td>
       <td>
         <div class="row-actions">
-          <button class="secondary-btn" type="button" data-action="edit" data-id="${product.id}">Edit</button>
+          <a class="secondary-btn row-link-btn" href="${productEditUrl(product.id)}">Edit</a>
           <button class="secondary-btn" type="button" data-action="toggle" data-id="${product.id}">
             ${product.is_active ? "Hide" : "Show"}
           </button>
@@ -244,6 +269,9 @@ function renderRows() {
 }
 
 async function loadProducts() {
+  if (!rowsEl) {
+    return;
+  }
   setStatus("Loading products...");
   try {
     const data = await requestJson(buildListUrl(), { headers: { "Content-Type": "application/json" } });
@@ -256,6 +284,9 @@ async function loadProducts() {
 }
 
 async function loadNewDrop() {
+  if (!dropForm) {
+    return;
+  }
   setDropStatus("Loading New Drop details...");
   try {
     const data = await requestJson(newDropApiBase);
@@ -282,6 +313,9 @@ async function loadNewDrop() {
 }
 
 function clearForm() {
+  if (!form) {
+    return;
+  }
   productId.value = "";
   form.reset();
   fields.category.value = "tshirts";
@@ -301,6 +335,9 @@ function clearForm() {
 }
 
 function editProduct(id) {
+  if (!form) {
+    return;
+  }
   const product = products.find((item) => item.id === id);
   if (!product) {
     return;
@@ -323,6 +360,36 @@ function editProduct(id) {
   formTitle.textContent = `Edit #${product.id}`;
   setImagePreview(product.image_url, product.name);
   setErrors(null);
+}
+
+async function loadProductForForm() {
+  if (!form || !productId || !productId.value) {
+    return;
+  }
+
+  try {
+    const product = await requestJson(`${apiBase}${productId.value}/`);
+    fields.name.value = product.name || "";
+    fields.slug.value = product.slug || "";
+    fields.category.value = product.category || "tshirts";
+    fields.badge.value = product.badge || "";
+    fields.price.value = product.price || 0;
+    fields.icon.value = product.icon || "T";
+    fields.emoji.value = product.emoji || "K";
+    fields.bg.value = product.bg || "p-bg-1";
+    fields.sizes.value = Array.isArray(product.sizes) ? product.sizes.join(",") : product.sizes || "XS,S,M,L,XL,XXL";
+    fields.colors.value = Array.isArray(product.colors) ? product.colors.join(",") : product.colors || "Black,White,Navy";
+    fields.stockStatus.value = product.stock_status || "In stock";
+    fields.image.value = "";
+    fields.isActive.checked = Boolean(product.is_active);
+    if (formTitle) {
+      formTitle.textContent = `Edit ${product.name}`;
+    }
+    setImagePreview(product.image_url, product.name);
+    setErrors(null);
+  } catch (error) {
+    setErrors(error.message);
+  }
 }
 
 function getPayload() {
@@ -371,6 +438,7 @@ async function saveProduct(event) {
     clearForm();
     await loadProducts();
     setStatus(savedProduct.image_url ? "Product saved with image." : "Product saved without image.");
+    window.location.href = "/admin-products/";
   } catch (error) {
     setErrors(error.payload && error.payload.errors ? error.payload.errors : error.message);
     setStatus("Could not save product.");
@@ -378,6 +446,9 @@ async function saveProduct(event) {
 }
 
 function getDropFormData() {
+  if (!dropForm) {
+    return new FormData();
+  }
   const formData = new FormData(dropForm);
   formData.set("title", dropFields.title.value.trim());
   formData.set("season", dropFields.season.value.trim());
@@ -453,6 +524,7 @@ async function deleteProduct(id) {
   }
 }
 
+if (rowsEl) {
 rowsEl.addEventListener("click", (event) => {
   const button = event.target.closest("[data-action]");
   if (!button) {
@@ -470,24 +542,44 @@ rowsEl.addEventListener("click", (event) => {
     deleteProduct(id);
   }
 });
+}
 
+if (form) {
 form.addEventListener("submit", saveProduct);
+}
+if (dropForm) {
 dropForm.addEventListener("submit", saveNewDrop);
+}
+if (fields.image) {
 fields.image.addEventListener("change", () => {
   const file = fields.image.files[0];
   setImagePreview(file ? URL.createObjectURL(file) : "");
 });
+}
+if (dropFields.image) {
 dropFields.image.addEventListener("change", () => {
   const file = dropFields.image.files[0];
   setDropImagePreview(file ? URL.createObjectURL(file) : "");
 });
-document.getElementById("clearFormBtn").addEventListener("click", clearForm);
-document.getElementById("newProductBtn").addEventListener("click", clearForm);
-document.getElementById("refreshBtn").addEventListener("click", loadProducts);
-Object.values(filters).forEach((field) => {
+}
+const clearFormBtn = document.getElementById("clearFormBtn");
+const newProductBtn = document.getElementById("newProductBtn");
+const refreshBtn = document.getElementById("refreshBtn");
+
+if (clearFormBtn) {
+  clearFormBtn.addEventListener("click", clearForm);
+}
+if (newProductBtn) {
+  newProductBtn.addEventListener("click", clearForm);
+}
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", loadProducts);
+}
+Object.values(filters).filter(Boolean).forEach((field) => {
   field.addEventListener("input", loadProducts);
   field.addEventListener("change", loadProducts);
 });
 
 loadProducts();
 loadNewDrop();
+loadProductForForm();

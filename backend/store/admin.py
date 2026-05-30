@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 
-from .models import NewDrop, Product
+from .models import CartItem, NewDrop, Product
 
 
 @admin.register(Product)
@@ -97,3 +97,11 @@ class NewDropAdmin(admin.ModelAdmin):
                 obj.title.splitlines()[0] if obj.title else "New Drop",
             )
         return "No image uploaded"
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("user", "product", "size", "quantity", "updated_at")
+    list_filter = ("size", "created_at", "updated_at")
+    search_fields = ("user__username", "product__name")
+    ordering = ("-updated_at",)

@@ -45,8 +45,9 @@ function getBackendProducts() {
 }
 
 let products = getBackendProducts() || defaultProducts;
-const ORDER_WHATSAPP_NUMBER = "9802792736";
-const ORDER_INSTAGRAM_URL = "https://instagram.com/krishnareadymade";
+const ORDER_WHATSAPP_NUMBER = "9842169807";
+const ORDER_INSTAGRAM_URL = "https://ig.me/m/kris_hnareadymade";
+const CART_API_BASE = "/api/cart/";
 
 let cart = [];
 let wishlist = [];
@@ -71,12 +72,85 @@ const follower = document.getElementById("cursorFollower");
 const countdownTarget = new Date();
 const isAuthenticated = document.body.dataset.authenticated === "true";
 const loginUrl = document.body.dataset.loginUrl || "/login/";
+const orderOptions = document.getElementById("orderOptions");
 
 function on(id, eventName, handler) {
   const element = document.getElementById(id);
   if (element) {
     element.addEventListener(eventName, handler);
   }
+}
+
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  if (meta && meta.content) {
+    return meta.content;
+  }
+
+  const cookie = document.cookie
+    .split(";")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith("csrftoken="));
+  return cookie ? decodeURIComponent(cookie.split("=")[1]) : "";
+}
+
+async function requestCart(options = {}) {
+  const response = await fetch(CART_API_BASE, {
+    ...options,
+    headers: {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCsrfToken(),
+      ...(options.headers || {})
+    }
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.error || "Could not update cart.");
+  }
+  return data;
+}
+
+function applyCartPayload(data) {
+  cart = Array.isArray(data.items) ? data.items : [];
+  updateCartUI();
+  renderCartItems();
+}
+
+async function loadCartFromServer() {
+  if (!isAuthenticated) {
+    return;
+  }
+
+  try {
+    applyCartPayload(await requestCart());
+  } catch (_error) {
+    updateCartUI();
+    renderCartItems();
+  }
+}
+
+async function saveCartItem(productId, size, quantity) {
+  if (!isAuthenticated) {
+    return;
+  }
+
+  applyCartPayload(await requestCart({
+    method: "POST",
+    body: JSON.stringify({ product_id: productId, size, quantity })
+  }));
+}
+
+async function deleteCartItem(productId, size) {
+  if (!isAuthenticated) {
+    return;
+  }
+
+  applyCartPayload(await requestCart({
+    method: "DELETE",
+    body: JSON.stringify({ product_id: productId, size })
+  }));
 }
 
 countdownTarget.setDate(countdownTarget.getDate() + 3);
@@ -153,29 +227,6 @@ function categoryLabel(category) {
   return labels[category] || "Product";
 }
 
-function colorToCss(color) {
-  const namedColors = {
-    black: "#111111",
-    white: "#ffffff",
-    navy: "#1f2a44",
-    blue: "#2d5f9a",
-    red: "#b42318",
-    brown: "#8a5a33",
-    green: "#2f7d50",
-    grey: "#767676",
-    gray: "#767676",
-    cream: "#f3ead7",
-    beige: "#d8c3a5"
-  };
-  return namedColors[String(color).trim().toLowerCase()] || "#c9a84c";
-}
-
-function renderColorSwatches(colors = []) {
-  return colors.slice(0, 4).map((color) => `
-    <span class="color-swatch" style="background:${colorToCss(color)}" title="${escapeHtml(color)}"></span>
-  `).join("");
-}
-
 function renderSizeChips(sizes = []) {
   return sizes.slice(0, 4).map((size) => `
     <span class="size-chip">${escapeHtml(size)}</span>
@@ -190,34 +241,9 @@ function renderProducts(filter = "all") {
   const normalizedFilter = normalizeCategory(filter);
   const filtered = normalizedFilter === "all" ? products : products.filter((product) => product.cat === normalizedFilter);
 
-  productGrid.innerHTML = filtered.map((product) => `
-    <div class="product-card" data-id="${product.id}">
-      <div class="product-img">
-        ${renderProductImage(product)}
-        <div class="product-img-shade"></div>
-        ${product.badge ? `<div class="product-badge badge-${escapeHtml(product.badge)}">${escapeHtml(product.badge.toUpperCase())}</div>` : ""}
-        <button class="product-wishlist ${wishlist.includes(product.id) ? "active" : ""}" data-action="toggle-wishlist" data-id="${product.id}">${wishlist.includes(product.id) ? "♥" : "♡"}</button>
-        <button class="quick-view" data-action="open-modal" data-id="${product.id}">QUICK VIEW</button>
-      </div>
-      <div class="product-info">
-        <div class="product-meta-row">
-          <span class="product-category">${categoryLabel(product.cat)}</span>
-          <span class="product-stock">${escapeHtml(product.stockStatus || "In stock")}</span>
-        </div>
-        <div class="product-name"><a href="/products/${escapeHtml(product.slug)}/">${escapeHtml(product.name)}</a></div>
-        <div class="product-options">
-          <div class="size-chips">${renderSizeChips(product.sizes)}</div>
-          <div class="color-swatches">${renderColorSwatches(product.colors)}</div>
-        </div>
-        <div class="product-price-row">
-          <div>
-            <span class="product-price">NPR ${product.price.toLocaleString()}</span>
-          </div>
-          <button class="add-cart-btn" data-action="add-cart" data-id="${product.id}" title="Add to cart">🛒</button>
-        </div>
-      </div>
-    </div>
-  `).join("");
+  productGrid.innerHTML = filtered.map((product) => (
+    window.KrishnaProductCard.render(product, { wishlist })
+  )).join("");
 }
 
 async function hydrateProductsFromApi() {
@@ -291,7 +317,7 @@ function toggleWishlist(id, button) {
   button.textContent = "♥";
 }
 
-function addToCart(id, size = "M") {
+async function addToCart(id, size = "M", quantity = 1) {
   if (!requireLogin()) {
     return;
   }
@@ -304,21 +330,39 @@ function addToCart(id, size = "M") {
 
   const existing = cart.find((item) => item.id === id && item.size === size);
 
+  const qtyToAdd = Math.max(1, Number(quantity) || 1);
+
   if (existing) {
-    existing.qty += 1;
+    existing.qty += qtyToAdd;
   } else {
-    cart.push({ ...product, size, qty: 1 });
+    cart.push({ ...product, size, qty: qtyToAdd });
   }
 
   updateCartUI();
   renderCartItems();
+  try {
+    await saveCartItem(id, size, existing ? existing.qty : qtyToAdd);
+  } catch (_error) {
+    window.alert("Could not save cart. Please try again.");
+  }
   showAddedFeedback();
 }
 
-function removeFromCart(id, size) {
+function quantityFromCard(actionElement) {
+  const card = actionElement.closest(".product-card");
+  const input = card ? card.querySelector(".product-quantity input") : null;
+  return Math.max(1, Number(input ? input.value : 1) || 1);
+}
+
+async function removeFromCart(id, size) {
   cart = cart.filter((item) => !(item.id === id && item.size === size));
   updateCartUI();
   renderCartItems();
+  try {
+    await deleteCartItem(id, size);
+  } catch (_error) {
+    window.alert("Could not remove item. Please try again.");
+  }
 }
 
 function buildOrderMessage() {
@@ -348,13 +392,56 @@ function handleCheckout() {
     return;
   }
 
+  if (orderOptions) {
+    orderOptions.hidden = !orderOptions.hidden;
+  }
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const copied = document.execCommand("copy");
+  textarea.remove();
+  return copied;
+}
+
+async function openOrderChannel(channel) {
+  if (!requireLogin()) {
+    return;
+  }
+
+  if (!cart.length) {
+    window.alert("Your cart is empty. Please add products first.");
+    return;
+  }
+
   const message = buildOrderMessage();
   const whatsappUrl = `https://wa.me/${ORDER_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  const useWhatsApp = window.confirm(
-    "You will be redirected to confirm your order.\n\nPress OK for WhatsApp, or Cancel for Instagram."
-  );
+  const orderUrl = channel === "whatsapp" ? whatsappUrl : ORDER_INSTAGRAM_URL;
 
-  window.open(useWhatsApp ? whatsappUrl : ORDER_INSTAGRAM_URL, "_blank", "noopener,noreferrer");
+  if (channel === "instagram") {
+    const copied = await copyTextToClipboard(message).catch(() => false);
+    if (copied) {
+      window.alert("Order details copied. Paste them in the Instagram message box.");
+    } else {
+      window.prompt("Copy your order details, then paste them in Instagram:", message);
+    }
+  }
+
+  window.open(orderUrl, "_blank", "noopener,noreferrer");
+  if (orderOptions) {
+    orderOptions.hidden = true;
+  }
 }
 
 function updateCartUI() {
@@ -559,6 +646,16 @@ const checkoutButton = document.querySelector(".checkout-btn");
 if (checkoutButton) {
   checkoutButton.addEventListener("click", handleCheckout);
 }
+
+if (orderOptions) {
+  orderOptions.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-order-channel]");
+    if (!button) {
+      return;
+    }
+    openOrderChannel(button.dataset.orderChannel);
+  });
+}
 if (drawerOverlay) {
   drawerOverlay.addEventListener("click", closeCart);
 }
@@ -594,7 +691,31 @@ if (productGrid) {
     }
 
     if (actionElement.dataset.action === "add-cart") {
-      addToCart(id);
+      addToCart(id, "M", quantityFromCard(actionElement));
+    }
+  });
+
+  productGrid.addEventListener("click", (event) => {
+    const quantityButton = event.target.closest("[data-quantity-step]");
+
+    if (!quantityButton) {
+      return;
+    }
+
+    const quantity = quantityButton.closest(".product-quantity");
+    const input = quantity ? quantity.querySelector("input") : null;
+    if (!input) {
+      return;
+    }
+
+    const nextValue = Math.max(1, Math.min(99, Number(input.value || 1) + Number(quantityButton.dataset.quantityStep)));
+    input.value = nextValue;
+  });
+
+  productGrid.addEventListener("input", (event) => {
+    const input = event.target.closest(".product-quantity input");
+    if (input) {
+      input.value = Math.max(1, Math.min(99, Number(input.value || 1)));
     }
   });
 }
@@ -689,4 +810,6 @@ window.setInterval(updateCountdown, 1000);
 updateCountdown();
 renderProducts();
 updateCartUI();
+renderCartItems();
 hydrateProductsFromApi();
+loadCartFromServer();

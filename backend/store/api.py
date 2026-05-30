@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 
-from .models import NewDrop, Product
+from .models import CartItem, NewDrop, Product
 
 
 def product_payload(product):
@@ -31,6 +31,43 @@ def product_payload(product):
         "created_at": product.created_at,
         "updated_at": product.updated_at,
     }
+
+
+def frontend_cart_product_payload(product):
+    payload = product_payload(product)
+    return {
+        "id": payload["id"],
+        "name": payload["name"],
+        "slug": payload["slug"],
+        "price": payload["price"],
+        "old": payload["old"],
+        "cat": payload["cat"],
+        "badge": payload["badge"],
+        "icon": payload["icon"],
+        "bg": payload["bg"],
+        "emoji": payload["emoji"],
+        "imageUrl": payload["image_url"],
+        "sizes": payload["sizes"],
+        "colors": payload["colors"],
+        "stockStatus": payload["stock_status"],
+    }
+
+
+def cart_item_payload(cart_item):
+    return {
+        **frontend_cart_product_payload(cart_item.product),
+        "size": cart_item.size,
+        "qty": cart_item.quantity,
+    }
+
+
+def cart_payload(user):
+    items = (
+        CartItem.objects.select_related("product")
+        .filter(user=user, product__is_active=True)
+        .order_by("created_at")
+    )
+    return {"items": [cart_item_payload(item) for item in items]}
 
 
 def new_drop_payload(drop):
@@ -106,6 +143,12 @@ def staff_error(request):
     if request.user.is_authenticated and request.user.is_staff:
         return None
     return JsonResponse({"error": "Staff login required."}, status=403)
+
+
+def login_error(request):
+    if request.user.is_authenticated:
+        return None
+    return JsonResponse({"error": "Login required."}, status=403)
 
 
 def unique_slug(name, product_id=None, requested_slug=""):
@@ -308,3 +351,47 @@ def new_drop_api(request):
 
     drop.save()
     return JsonResponse({"drop": new_drop_payload(drop)}, encoder=DjangoJSONEncoder)
+
+
+def cart_api(request):
+    error_response = login_error(request)
+    if error_response:
+        return error_response
+
+    if request.method == "GET":
+        return JsonResponse(cart_payload(request.user), encoder=DjangoJSONEncoder)
+
+    if request.method not in {"POST", "DELETE"}:
+        return JsonResponse({"error": "Method not allowed."}, status=405)
+
+    payload = read_json_body(request)
+    if payload is None:
+        return JsonResponse({"error": "Request body must be valid JSON."}, status=400)
+
+    product_id = payload.get("product_id")
+    size = str(payload.get("size") or "M").strip() or "M"
+    product = get_object_or_404(Product, id=product_id, is_active=True)
+
+    if request.method == "DELETE":
+        CartItem.objects.filter(user=request.user, product=product, size=size).delete()
+        return JsonResponse(cart_payload(request.user), encoder=DjangoJSONEncoder)
+
+    try:
+        quantity = int(payload.get("quantity", 1))
+    except (TypeError, ValueError):
+        return JsonResponse({"errors": {"quantity": "Quantity must be a whole number."}}, status=400)
+
+    if quantity < 1:
+        return JsonResponse({"errors": {"quantity": "Quantity must be at least 1."}}, status=400)
+
+    cart_item, created = CartItem.objects.get_or_create(
+        user=request.user,
+        product=product,
+        size=size,
+        defaults={"quantity": quantity},
+    )
+    if not created:
+        cart_item.quantity = quantity
+        cart_item.save(update_fields=["quantity", "updated_at"])
+
+    return JsonResponse(cart_payload(request.user), encoder=DjangoJSONEncoder)

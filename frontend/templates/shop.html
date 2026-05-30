@@ -4,10 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token }}">
 <title>Shop | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=6">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=10">
 </head>
 <body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
@@ -29,7 +30,11 @@
   </div>
   <div class="cart-footer">
     <div class="cart-total"><span>TOTAL</span><span>NPR <span id="cartTotal">0</span></span></div>
-    <button class="checkout-btn">ORDER VIA WHATSAPP / INSTAGRAM</button>
+    <button class="checkout-btn" type="button">ORDER VIA WHATSAPP / INSTAGRAM</button>
+    <div class="order-options" id="orderOptions" hidden>
+      <button class="order-option-btn instagram-option" type="button" data-order-channel="instagram">Instagram</button>
+      <button class="order-option-btn whatsapp-option" type="button" data-order-channel="whatsapp">WhatsApp</button>
+    </div>
   </div>
 </div>
 
@@ -74,7 +79,7 @@
     <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
     <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
     {% endif %}
-    <button class="nav-icon" id="cartToggle">🛒<span class="cart-count" id="navCartCount">0</span></button>
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}">🛒<span class="cart-count" id="navCartCount">0</span></a>
   </div>
 </nav>
 
@@ -95,6 +100,7 @@
 </section>
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
-<script src="{% static 'js/shop.js' %}?v=6" defer></script>
+<script src="{% static 'js/components/product-card.js' %}?v=2" defer></script>
+<script src="{% static 'js/shop.js' %}?v=12" defer></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+{% load static %}
+<aside class="sidenav" aria-label="Admin navigation">
+  <a class="brand sidenav-brand" href="{% url 'home' %}">Krishna<span>.</span></a>
+  <nav class="sidenav-links">
+    <a href="{% url 'admin_new_drop' %}" class="{% if active_admin_page == 'new_drop' %}active{% endif %}">
+      <span class="nav-mark"></span>
+      New Drop
+    </a>
+    <a href="{% url 'admin_products' %}" class="{% if active_admin_page == 'products' %}active{% endif %}">
+      <span class="nav-mark"></span>
+      Products
+    </a>
+  </nav>
+  <div class="sidenav-footer">
+    <a href="{% url 'shop' %}">View Shop</a>
+    <a href="{% url 'new_drop' %}">View Drop</a>
+    <a href="{% url 'admin:index' %}">Django Admin</a>
+  </div>
+</aside>

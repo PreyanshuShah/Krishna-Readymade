@@ -4,10 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token }}">
 <title>Krishna Readymade – Style That Defines You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/index.css' %}?v=8">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=12">
 </head>
 <body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
@@ -40,7 +41,11 @@
       <span>TOTAL</span>
       <span>NPR <span id="cartTotal">0</span></span>
     </div>
-    <button class="checkout-btn">ORDER VIA WHATSAPP / INSTAGRAM</button>
+    <button class="checkout-btn" type="button">ORDER VIA WHATSAPP / INSTAGRAM</button>
+    <div class="order-options" id="orderOptions" hidden>
+      <button class="order-option-btn instagram-option" type="button" data-order-channel="instagram">Instagram</button>
+      <button class="order-option-btn whatsapp-option" type="button" data-order-channel="whatsapp">WhatsApp</button>
+    </div>
   </div>
 </div>
 
@@ -89,9 +94,9 @@
     {% endif %}
     <button class="nav-icon" title="Search">🔍</button>
     <button class="nav-icon" title="Wishlist">♡</button>
-    <button class="nav-icon" id="cartToggle" title="Cart">
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}" title="Cart">
       🛒<span class="cart-count" id="navCartCount">0</span>
-    </button>
+    </a>
     <button class="nav-cta">SHOP NOW</button>
     <button class="hamburger" id="hamburger">
       <span></span><span></span><span></span>
@@ -314,9 +319,9 @@
       <span class="logo">Krishna<span>.</span></span>
       <p class="footer-tagline">"Style That Defines You"</p>
       <div class="social-links">
-        <a href="https://instagram.com/krishnareadymade" target="_blank" class="social-link">📸</a>
-        <a href="https://wa.me/9802792736" target="_blank" class="social-link">💬</a>
-        <a href="tel:9802792736" class="social-link">📞</a>
+        <a href="https://www.instagram.com/kris_hnareadymade/" target="_blank" class="social-link">📸</a>
+        <a href="https://wa.me/9842169807" target="_blank" class="social-link">💬</a>
+        <a href="tel:9842169807" class="social-link">📞</a>
       </div>
     </div>
     <div class="footer-col">
@@ -344,7 +349,7 @@
       <h4>CONTACT US</h4>
       <div class="contact-item">
         <span class="contact-icon">📞</span>
-        <a href="tel:9802792736">9802792736</a>
+        <a href="tel:9842169807">9842169807</a>
       </div>
       <div class="contact-item">
         <span class="contact-icon">📱</span>
@@ -352,7 +357,7 @@
       </div>
       <div class="contact-item">
         <span class="contact-icon">💬</span>
-        <a href="https://wa.me/9802792736" target="_blank">WhatsApp Us</a>
+        <a href="https://wa.me/9842169807" target="_blank">WhatsApp Us</a>
       </div>
       <div class="contact-item">
         <span class="contact-icon">📍</span>
@@ -360,7 +365,7 @@
       </div>
       <div class="contact-item">
         <span class="contact-icon">📸</span>
-        <a href="https://instagram.com" target="_blank">@KrishnaReadymade</a>
+        <a href="https://www.instagram.com/kris_hnareadymade/" target="_blank">@kris_hnareadymade</a>
       </div>
     </div>
   </div>
@@ -373,6 +378,7 @@
 </footer>
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
-<script src="{% static 'js/index.js' %}?v=7" defer></script>
+<script src="{% static 'js/components/product-card.js' %}?v=2" defer></script>
+<script src="{% static 'js/index.js' %}?v=13" defer></script>
 </body>
 </html>

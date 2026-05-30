@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>Your Cart | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=9">
+</head>
+<body class="cart-page-body">
+<nav id="navbar" class="scrolled">
+  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <span class="nav-user">{{ request.user.username }}</span>
+    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}" title="Cart">🛒<span class="cart-count">{{ item_count }}</span></a>
+  </div>
+</nav>
+
+<main class="cart-page">
+  <section class="cart-page-head">
+    <p class="section-label">Your Selection</p>
+    <h1>Shopping Cart</h1>
+    <p>Review your items, then choose Instagram or WhatsApp to confirm your order.</p>
+  </section>
+
+  {% if items %}
+  <section class="cart-page-grid">
+    <div class="cart-list">
+      {% for item in items %}
+      <article class="cart-line" data-product-id="{{ item.product.id }}" data-size="{{ item.size }}">
+        <div class="cart-line-media">
+          {% if item.product.image %}
+          <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+          {% else %}
+          <span>{{ item.product.icon }}</span>
+          {% endif %}
+        </div>
+        <div class="cart-line-info">
+          <p class="cart-line-category">{{ item.product.get_category_display }}</p>
+          <h2>{{ item.product.name }}</h2>
+          <div class="cart-line-meta">
+            <span>Size {{ item.size }}</span>
+            <span>Qty {{ item.quantity }}</span>
+            <span>{{ item.product.stock_status }}</span>
+          </div>
+        </div>
+        <div class="cart-line-price">
+          <strong>NPR {{ item.line_total }}</strong>
+          <button class="cart-remove-btn" type="button" data-remove-cart-item>Remove</button>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <aside class="cart-summary">
+      <p class="section-label">Order Summary</p>
+      <div class="summary-line">
+        <span>Items</span>
+        <strong>{{ item_count }}</strong>
+      </div>
+      <div class="summary-line total-line">
+        <span>Total</span>
+        <strong>NPR {{ total }}</strong>
+      </div>
+      <div class="cart-order-actions">
+        <button class="order-option-btn instagram-option" type="button" data-cart-order-channel="instagram">Order on Instagram</button>
+        <button class="order-option-btn whatsapp-option" type="button" data-cart-order-channel="whatsapp">Order on WhatsApp</button>
+      </div>
+      <a class="continue-shopping-link" href="{% url 'shop' %}">Continue Shopping</a>
+    </aside>
+  </section>
+  {% else %}
+  <section class="cart-empty-page">
+    <span>🛍️</span>
+    <h1>Your cart is empty</h1>
+    <p>Add products from the shop and they will appear here.</p>
+    <a class="btn-primary" href="{% url 'shop' %}">Shop Products</a>
+  </section>
+  {% endif %}
+</main>
+
+{{ order_message|json_script:"orderMessageData" }}
+<script src="{% static 'js/cart.js' %}?v=1" defer></script>
+</body>
+</html>

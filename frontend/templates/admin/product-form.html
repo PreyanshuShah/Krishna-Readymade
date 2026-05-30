@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token }}">
+<title>{{ form_title }} | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/admin-products.css' %}?v=9">
+</head>
+<body>
+<div class="admin-layout">
+  {% include "admin/_sidenav.html" %}
+
+  <main class="admin-shell">
+    <section class="section-card product-form-page" aria-label="Product editor">
+      <div class="section-card-head">
+        <div>
+          <p class="eyebrow">Catalog</p>
+          <h1 id="formTitle">{{ form_title }}</h1>
+          <p class="section-copy">Add or update the product details shown on the storefront.</p>
+        </div>
+        <a class="secondary-btn inline-link-btn" href="{% url 'admin_products' %}">Back to List</a>
+      </div>
+
+      <form id="productForm" class="standalone-product-form" enctype="multipart/form-data">
+        <input type="hidden" id="productId" value="{{ product_id|default:'' }}">
+        <div class="panel-grid">
+          <div class="form-panel">
+            <h3>Basic Info</h3>
+            <label>
+              Name
+              <input id="nameInput" name="name" type="text" required maxlength="200">
+            </label>
+            <label>
+              Slug
+              <input id="slugInput" name="slug" type="text" maxlength="220" placeholder="Auto-generated when blank">
+            </label>
+            <label>
+              Price
+              <input id="priceInput" name="price" type="number" min="0" step="1" required>
+            </label>
+          </div>
+
+          <div class="form-panel">
+            <h3>Storefront Display</h3>
+            <div class="form-grid">
+              <label>
+                Category
+                <select id="categoryInput" name="category">
+                  {% for value, label in category_choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+              <label>
+                Badge
+                <select id="badgeInput" name="badge">
+                  {% for value, label in badge_choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                  {% endfor %}
+                </select>
+              </label>
+            </div>
+            <div class="form-grid">
+              <label>
+                Icon
+                <input id="iconInput" name="icon" type="text" maxlength="10" value="T">
+              </label>
+              <label>
+                Emoji
+                <input id="emojiInput" name="emoji" type="text" maxlength="10" value="K">
+              </label>
+            </div>
+            <label>
+              Card background
+              <select id="bgInput" name="bg">
+                <option value="p-bg-1">p-bg-1</option>
+                <option value="p-bg-2">p-bg-2</option>
+                <option value="p-bg-3">p-bg-3</option>
+                <option value="p-bg-4">p-bg-4</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-panel">
+            <h3>Inventory</h3>
+            <label>
+              Sizes
+              <input id="sizesInput" name="sizes" type="text" maxlength="120" value="XS,S,M,L,XL,XXL">
+            </label>
+            <label>
+              Colors
+              <input id="colorsInput" name="colors" type="text" maxlength="160" value="Black,White,Navy">
+            </label>
+            <label>
+              Stock status
+              <input id="stockStatusInput" name="stock_status" type="text" maxlength="80" value="In stock">
+            </label>
+          </div>
+
+          <div class="form-panel">
+            <h3>Media & Publish</h3>
+            <label>
+              Product image
+              <input id="imageInput" name="image" type="file" accept="image/*">
+            </label>
+            <div class="image-preview" id="imagePreview" hidden></div>
+            <label class="check-row">
+              <input id="activeInput" name="is_active" type="checkbox" checked>
+              Active on storefront
+            </label>
+          </div>
+        </div>
+        <div id="formErrors" class="form-errors" hidden></div>
+        <div class="form-footer">
+          <a class="secondary-btn inline-link-btn" href="{% url 'admin_products' %}">Cancel</a>
+          <button class="link-btn" type="button" id="clearFormBtn">Clear</button>
+          <button class="primary-btn" type="submit">Save Product</button>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script src="{% static 'js/admin-products.js' %}?v=10" defer></script>
+</body>
+</html>

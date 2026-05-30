@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 
@@ -73,3 +74,21 @@ class NewDrop(models.Model):
 
     def __str__(self):
         return self.title.splitlines()[0] if self.title else "New Drop"
+
+
+class CartItem(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cart_items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    size = models.CharField(max_length=20, default="M")
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["user", "product", "size"], name="unique_cart_item_per_user_product_size"),
+        ]
+
+    def __str__(self):
+        return f"{self.user} - {self.product} ({self.size})"
