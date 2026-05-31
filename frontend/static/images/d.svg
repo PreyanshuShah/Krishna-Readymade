@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Krishna Readymade clothing rack</title>
+  <desc id="desc">A clothing rack with shirts, t-shirts, shoes and accessories.</desc>
+  <defs>
+    <linearGradient id="wall" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fbf4ee"/>
+      <stop offset="1" stop-color="#e6d8cc"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#e8ded4"/>
+      <stop offset="1" stop-color="#cfc3b8"/>
+    </linearGradient>
+    <linearGradient id="blackFabric" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#191919"/>
+      <stop offset="1" stop-color="#050505"/>
+    </linearGradient>
+    <linearGradient id="creamFabric" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fff8ee"/>
+      <stop offset="1" stop-color="#d9c1a3"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000" flood-opacity=".2"/>
+    </filter>
+    <pattern id="plaid" width="70" height="70" patternUnits="userSpaceOnUse">
+      <rect width="70" height="70" fill="#111"/>
+      <rect x="0" y="0" width="70" height="16" fill="#e9e4dc" opacity=".85"/>
+      <rect x="0" y="34" width="70" height="9" fill="#e9e4dc" opacity=".6"/>
+      <rect x="0" y="0" width="16" height="70" fill="#e9e4dc" opacity=".85"/>
+      <rect x="34" y="0" width="9" height="70" fill="#e9e4dc" opacity=".6"/>
+      <path d="M0 52H70M52 0V70" stroke="#777" stroke-width="3" opacity=".55"/>
+    </pattern>
+  </defs>
+  <rect width="1400" height="1000" fill="url(#wall)"/>
+  <rect y="720" width="1400" height="280" fill="url(#floor)"/>
+  <g filter="url(#shadow)">
+    <path d="M95 720V75c0-22 18-40 40-40h1130c22 0 40 18 40 40v645" fill="none" stroke="#111" stroke-width="34" stroke-linecap="round"/>
+    <path d="M120 80h1160" stroke="#202020" stroke-width="28" stroke-linecap="round"/>
+  </g>
+  <g stroke="#111" stroke-width="10" fill="none" stroke-linecap="round">
+    <path d="M285 104c0 46-18 56-18 84"/>
+    <path d="M465 104c0 46-18 56-18 84"/>
+    <path d="M630 104c0 46-18 56-18 84"/>
+    <path d="M795 104c0 46-18 56-18 84"/>
+    <path d="M970 104c0 46-18 56-18 84"/>
+    <path d="M1150 104c0 46-18 56-18 84"/>
+  </g>
+  <g filter="url(#shadow)">
+    <path d="M150 190h260l80 85 25 400H110l25-400z" fill="url(#plaid)"/>
+    <path d="M150 190h260l80 85 25 400H110l25-400z" fill="none" stroke="#222" stroke-width="4"/>
+    <path d="M250 190l35 75 35-75" fill="none" stroke="#222" stroke-width="12"/>
+    <circle cx="315" cy="330" r="7" fill="#ddd"/>
+    <circle cx="315" cy="420" r="7" fill="#ddd"/>
+    <circle cx="315" cy="510" r="7" fill="#ddd"/>
+  </g>
+  <g filter="url(#shadow)">
+    <path d="M430 230h210l60 70 30 360H400l30-360z" fill="#fffaf2"/>
+    <path d="M580 230l-65 90-65-90" fill="none" stroke="#f0e6da" stroke-width="18"/>
+    <path d="M610 230h210l60 70 30 360H580l30-360z" fill="#ead1b3"/>
+    <path d="M760 230l-65 90-65-90" fill="none" stroke="#ddbd98" stroke-width="18"/>
+    <path d="M790 230h210l60 70 30 360H760l30-360z" fill="#bfc0bc"/>
+    <path d="M940 230l-65 90-65-90" fill="none" stroke="#a9aaa6" stroke-width="18"/>
+    <path d="M970 230h230l75 78 25 352H940l30-360z" fill="url(#blackFabric)"/>
+    <path d="M1130 230l-70 92-70-92" fill="none" stroke="#050505" stroke-width="18"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="55" y="735" width="310" height="50" rx="8" fill="#111"/>
+    <rect x="55" y="785" width="310" height="48" rx="8" fill="#e7d6bd"/>
+    <rect x="55" y="833" width="310" height="48" rx="8" fill="#fbf8f1"/>
+    <rect x="55" y="881" width="310" height="48" rx="8" fill="#b8b8b6"/>
+    <rect x="55" y="929" width="310" height="48" rx="8" fill="#080808"/>
+    <path d="M390 825c35-80 130-82 165-12l52 102H370z" fill="#101010"/>
+    <path d="M565 825c35-80 130-82 165-12l52 102H545z" fill="#101010"/>
+    <path d="M407 892h175M582 892h175" stroke="#f0f0f0" stroke-width="8"/>
+    <path d="M407 855l90-55M585 855l90-55" stroke="#f0f0f0" stroke-width="8"/>
+    <rect x="925" y="790" width="210" height="120" rx="10" fill="#090909"/>
+    <rect x="1125" y="725" width="190" height="220" rx="18" fill="#0b0b0b"/>
+    <rect x="850" y="830" width="210" height="130" rx="10" fill="#111"/>
+    <rect x="1080" y="930" width="180" height="38" rx="19" fill="#090909"/>
+  </g>
+</svg>

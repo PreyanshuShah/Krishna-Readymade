@@ -537,18 +537,24 @@ nav.scrolled {
 
 .hero-model-frame {
   position: absolute;
-  right: 8%;
+  right: 5%;
   top: 50%;
   transform: translateY(-50%);
-  width: clamp(280px, 35vw, 480px);
-  height: clamp(420px, 60vh, 680px);
-  border: 1px solid rgba(201, 168, 76, 0.2);
+  width: clamp(420px, 46vw, 760px);
+  height: clamp(360px, 58vh, 620px);
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   animation: fadeIn 1s ease forwards 0.5s;
   opacity: 0;
+}
+
+.hero-look-image {
+  display: block;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  width: 100%;
 }
 
 .model-inner {

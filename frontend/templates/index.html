@@ -8,7 +8,7 @@
 <title>Krishna Readymade – Style That Defines You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/index.css' %}?v=12">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=17">
 </head>
 <body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
@@ -123,12 +123,11 @@
     </div>
   </div>
   <div class="hero-model-frame">
-    <div class="model-inner">
-      <div class="drop-number drop-number-small">KR</div>
-      <div class="model-silhouette"></div>
-      <div class="model-tag">FEATURED LOOK • SS25</div>
-    </div>
-    <div class="drop-tag-float">NEW DROP ✦</div>
+    <img
+      class="hero-look-image"
+      src="{% static 'images/homepage-collection.png' %}"
+      alt="Krishna Readymade shirts, t-shirts, shoes, and accessories"
+    >
   </div>
   <div class="hero-corner-tag">KRISHNA COLLECTION · SS25</div>
   <div class="hero-scroll">
