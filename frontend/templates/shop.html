@@ -8,7 +8,7 @@
 <title>Shop | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=10">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=11">
 </head>
 <body data-authenticated="{{ request.user.is_authenticated|yesno:'true,false' }}" data-login-url="{% url 'login' %}">
 
@@ -62,26 +62,7 @@
   </div>
 </div>
 
-<nav id="navbar" class="scrolled">
-  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'collection' %}">Collection</a></li>
-    <li><a href="{% url 'shop' %}">Shop</a></li>
-    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
-    <li><a href="{% url 'about' %}">About</a></li>
-  </ul>
-  <div class="nav-actions">
-    {% if request.user.is_authenticated %}
-    <span class="nav-user">{{ request.user.username }}</span>
-    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
-    {% else %}
-    <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
-    <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
-    {% endif %}
-    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}">🛒<span class="cart-count" id="navCartCount">0</span></a>
-  </div>
-</nav>
+{% include "components/_header.html" with nav_scrolled=True header_variant="cart_link" %}
 
 <section class="products" id="products" style="padding-top: 140px;">
   <div class="section-header">
@@ -98,6 +79,8 @@
   </div>
   <div class="product-grid" id="productGrid"></div>
 </section>
+
+{% include "components/_footer.html" %}
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
 <script src="{% static 'js/components/product-card.js' %}?v=2" defer></script>

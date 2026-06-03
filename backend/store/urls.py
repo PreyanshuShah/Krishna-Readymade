@@ -1,13 +1,9 @@
 from django.urls import path
 from . import api
-from . import auth_views
 from . import views
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("login/", auth_views.login_view, name="login"),
-    path("register/", auth_views.register_view, name="register"),
-    path("logout/", auth_views.logout_view, name="logout"),
     path("collection/", views.collection, name="collection"),
     path("shop/", views.shop, name="shop"),
     path("products/<slug:slug>/", views.product_detail, name="product_detail"),

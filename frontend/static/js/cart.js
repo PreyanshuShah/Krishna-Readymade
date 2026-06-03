@@ -39,15 +39,21 @@ async function copyTextToClipboard(text) {
 }
 
 async function removeCartItem(productId, size) {
-  const response = await fetch(CART_API_BASE, {
-    method: "DELETE",
-    headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json",
-      "X-CSRFToken": getCsrfToken()
-    },
-    body: JSON.stringify({ product_id: productId, size })
-  });
+  let response;
+  try {
+    response = await fetch(CART_API_BASE, {
+      method: "DELETE",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCsrfToken()
+      },
+      body: JSON.stringify({ product_id: productId, size })
+    });
+  } catch (_error) {
+    window.alert("Network problem. Please check your connection and try again.");
+    return;
+  }
 
   if (!response.ok) {
     window.alert("Could not remove item. Please try again.");
@@ -83,6 +89,9 @@ document.addEventListener("click", (event) => {
   const removeButton = event.target.closest("[data-remove-cart-item]");
   if (removeButton) {
     const line = removeButton.closest(".cart-line");
+    if (!line) {
+      return;
+    }
     removeCartItem(Number(line.dataset.productId), line.dataset.size);
     return;
   }

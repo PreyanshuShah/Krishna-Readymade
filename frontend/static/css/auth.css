@@ -89,6 +89,15 @@ h1 {
   border-color: var(--accent);
 }
 
+.field-error {
+  color: #b42318;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+}
+
 .auth-form button {
   background: var(--accent);
   border: 0;
@@ -115,4 +124,73 @@ h1 {
 .auth-switch {
   color: var(--muted);
   margin: 18px 0 0;
+}
+
+.error-panel {
+  text-align: center;
+}
+
+.error-code {
+  color: var(--accent);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 5rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin: 0;
+}
+
+.error-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.auth-action {
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  padding: 13px 18px;
+  text-decoration: none;
+}
+
+.auth-action.secondary {
+  background: #17181f;
+}
+
+.profile-panel {
+  max-width: 520px;
+}
+
+.profile-list {
+  display: grid;
+  gap: 12px;
+  margin: 26px 0;
+}
+
+.profile-list div {
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+}
+
+.profile-list dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-list dd {
+  color: var(--ink);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.profile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }

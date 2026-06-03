@@ -12,7 +12,7 @@
 <body>
 <main class="auth-shell">
   <section class="auth-panel">
-    <a class="auth-brand" href="{% url 'home' %}">Krishna<span>.</span></a>
+    <a class="auth-brand" href="{% url 'home' %}">Krishna Readymade</a>
     <h1>Login</h1>
     <p class="auth-copy">Browse freely. Login is only needed when you add products to your cart.</p>
 
@@ -26,10 +26,12 @@
       <label>
         Username
         {{ form.username }}
+        {% if form.username.errors %}<span class="field-error">{{ form.username.errors|striptags }}</span>{% endif %}
       </label>
       <label>
         Password
         {{ form.password }}
+        {% if form.password.errors %}<span class="field-error">{{ form.password.errors|striptags }}</span>{% endif %}
       </label>
 
       <button type="submit">Login</button>

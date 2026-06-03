@@ -8,24 +8,10 @@
 <title>Your Cart | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=9">
+<link rel="stylesheet" href="{% static 'css/shop.css' %}?v=11">
 </head>
 <body class="cart-page-body">
-<nav id="navbar" class="scrolled">
-  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'collection' %}">Collection</a></li>
-    <li><a href="{% url 'shop' %}">Shop</a></li>
-    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
-    <li><a href="{% url 'about' %}">About</a></li>
-  </ul>
-  <div class="nav-actions">
-    <span class="nav-user">{{ request.user.username }}</span>
-    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
-    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}" title="Cart">🛒<span class="cart-count">{{ item_count }}</span></a>
-  </div>
-</nav>
+{% include "components/_header.html" with nav_scrolled=True header_variant="cart" %}
 
 <main class="cart-page">
   <section class="cart-page-head">
@@ -89,6 +75,8 @@
   </section>
   {% endif %}
 </main>
+
+{% include "components/_footer.html" %}
 
 {{ order_message|json_script:"orderMessageData" }}
 <script src="{% static 'js/cart.js' %}?v=1" defer></script>

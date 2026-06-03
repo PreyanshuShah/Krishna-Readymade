@@ -107,6 +107,7 @@ function setDropErrors(errors) {
     dropFormErrors.textContent = "";
     return;
   }
+  
 
   if (typeof errors === "string") {
     dropFormErrors.textContent = errors;

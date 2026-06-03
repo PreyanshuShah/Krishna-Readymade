@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile | Krishna Readymade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/auth.css' %}?v=2">
+</head>
+<body>
+<main class="auth-shell">
+  <section class="auth-panel profile-panel">
+    <a class="auth-brand" href="{% url 'home' %}">Krishna Readymade</a>
+    <h1>Profile</h1>
+    <p class="auth-copy">Manage your account details and continue shopping.</p>
+
+    <dl class="profile-list">
+      <div>
+        <dt>Username</dt>
+        <dd>{{ request.user.username }}</dd>
+      </div>
+      <div>
+        <dt>Email</dt>
+        <dd>{{ request.user.email|default:"Not added" }}</dd>
+      </div>
+      <div>
+        <dt>Account Type</dt>
+        <dd>{% if request.user.is_staff %}Staff{% else %}Customer{% endif %}</dd>
+      </div>
+    </dl>
+
+    <div class="profile-actions">
+      <a class="auth-action" href="{% url 'shop' %}">Continue Shopping</a>
+      <a class="auth-action secondary" href="{% url 'logout' %}">Logout</a>
+    </div>
+  </section>
+</main>
+</body>
+</html>

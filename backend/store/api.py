@@ -369,8 +369,16 @@ def cart_api(request):
         return JsonResponse({"error": "Request body must be valid JSON."}, status=400)
 
     product_id = payload.get("product_id")
+    try:
+        product_id = int(product_id)
+    except (TypeError, ValueError):
+        return JsonResponse({"errors": {"product_id": "Choose a valid product."}}, status=400)
+
     size = str(payload.get("size") or "M").strip() or "M"
-    product = get_object_or_404(Product, id=product_id, is_active=True)
+    try:
+        product = Product.objects.get(id=product_id, is_active=True)
+    except Product.DoesNotExist:
+        return JsonResponse({"errors": {"product_id": "Product is not available."}}, status=404)
 
     if request.method == "DELETE":
         CartItem.objects.filter(user=request.user, product=product, size=size).delete()
@@ -383,6 +391,8 @@ def cart_api(request):
 
     if quantity < 1:
         return JsonResponse({"errors": {"quantity": "Quantity must be at least 1."}}, status=400)
+    if quantity > 99:
+        return JsonResponse({"errors": {"quantity": "Quantity cannot be more than 99."}}, status=400)
 
     cart_item, created = CartItem.objects.get_or_create(
         user=request.user,

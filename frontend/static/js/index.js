@@ -753,11 +753,20 @@ if (modalOverlay) {
 }
 
 window.addEventListener("load", () => {
+  const loader = document.getElementById("loader");
+
+  if (!loader) {
+    return;
+  }
+
+  if (sessionStorage.getItem("krishnaHomeIntroShown") === "true") {
+    loader.classList.add("hidden");
+    return;
+  }
+
+  sessionStorage.setItem("krishnaHomeIntroShown", "true");
   window.setTimeout(() => {
-    const loader = document.getElementById("loader");
-    if (loader) {
-      loader.classList.add("hidden");
-    }
+    loader.classList.add("hidden");
   }, 2000);
 });
 

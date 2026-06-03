@@ -1,0 +1,40 @@
+<nav id="navbar"{% if nav_scrolled %} class="scrolled"{% endif %}>
+  <a href="{% url 'home' %}" class="nav-logo">Krishna Readymade</a>
+  <ul class="nav-links">
+    <li><a href="{% url 'home' %}">Home</a></li>
+    <li><a href="{% url 'collection' %}">Collection</a></li>
+    <li><a href="{% url 'shop' %}">Shop</a></li>
+    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
+    {% if show_gallery_link %}<li><a href="{% url 'gallery' %}">Gallery</a></li>{% endif %}
+    <li><a href="{% url 'about' %}">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <div class="nav-account">
+    {% if request.user.is_authenticated %}
+    <a class="nav-user" href="{% url 'profile' %}">{{ request.user.username }}</a>
+    <a class="nav-auth-link" href="{% url 'logout' %}">Logout</a>
+    {% else %}
+    <a class="nav-auth-link" href="{% url 'login' %}">Login</a>
+    <a class="nav-auth-link" href="{% url 'register' %}">Register</a>
+    {% endif %}
+    </div>
+
+    {% if header_variant == "home" %}
+    <button class="nav-icon" title="Search">🔍</button>
+    <button class="nav-icon" title="Wishlist">♡</button>
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}" title="Cart">
+      🛒<span class="cart-count" id="navCartCount">0</span>
+    </a>
+    <a class="nav-cta" href="{% url 'shop' %}">SHOP NOW</a>
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+    {% elif header_variant == "cart" %}
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}" title="Cart">🛒<span class="cart-count">{{ item_count }}</span></a>
+    {% elif header_variant == "cart_link" %}
+    <a class="nav-icon cart-nav-link" href="{% url 'cart' %}">🛒<span class="cart-count" id="navCartCount">0</span></a>
+    {% else %}
+    <a href="{% url 'shop' %}" class="nav-cta">{{ header_cta_text|default:"SHOP NOW" }}</a>
+    {% endif %}
+  </div>
+</nav>

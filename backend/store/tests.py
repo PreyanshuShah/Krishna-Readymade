@@ -254,6 +254,25 @@ class ProductApiTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["items"], [])
 
+    def test_cart_api_rejects_invalid_product_and_quantity_cleanly(self):
+        self.client.force_login(self.staff_user)
+
+        invalid_product_response = self.client.post(
+            "/api/cart/",
+            data=json.dumps({"product_id": "bad", "size": "M", "quantity": 1}),
+            content_type="application/json",
+        )
+        invalid_quantity_response = self.client.post(
+            "/api/cart/",
+            data=json.dumps({"product_id": self.product.id, "size": "M", "quantity": 100}),
+            content_type="application/json",
+        )
+
+        self.assertEqual(invalid_product_response.status_code, 400)
+        self.assertIn("product_id", invalid_product_response.json()["errors"])
+        self.assertEqual(invalid_quantity_response.status_code, 400)
+        self.assertIn("quantity", invalid_quantity_response.json()["errors"])
+
     def test_cart_page_requires_login(self):
         response = self.client.get("/cart/")
 
@@ -360,3 +379,24 @@ class ProductApiTests(TestCase):
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], "/admin-products/")
+
+    def test_profile_page_requires_login(self):
+        response = self.client.get("/profile/")
+
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/login/", response.url)
+
+    def test_authenticated_user_can_open_profile_page(self):
+        self.client.force_login(self.staff_user)
+
+        response = self.client.get("/profile/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Profile")
+        self.assertContains(response, self.staff_user.username)
+
+    def test_missing_page_uses_friendly_error_page(self):
+        response = self.client.get("/missing-page/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "Page Not Found", status_code=404)

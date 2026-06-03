@@ -7,30 +7,11 @@
 <title>About | Krishna Readymade</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/about.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/about.css' %}?v=6">
 </head>
 <body>
 
-<nav id="navbar" class="scrolled">
-  <a href="{% url 'home' %}" class="nav-logo">Krishna<span>.</span></a>
-  <ul class="nav-links">
-    <li><a href="{% url 'home' %}">Home</a></li>
-    <li><a href="{% url 'collection' %}">Collection</a></li>
-    <li><a href="{% url 'shop' %}">Shop</a></li>
-    <li><a href="{% url 'new_drop' %}">New Drop</a></li>
-    <li><a href="{% url 'about' %}">About</a></li>
-  </ul>
-  <div class="nav-actions">
-    {% if request.user.is_authenticated %}
-    <span class="nav-user">{{ request.user.username }}</span>
-    <a href="{% url 'logout' %}" class="nav-auth-link">Logout</a>
-    {% else %}
-    <a href="{% url 'login' %}" class="nav-auth-link">Login</a>
-    <a href="{% url 'register' %}" class="nav-auth-link">Register</a>
-    {% endif %}
-    <a href="{% url 'shop' %}" class="btn-primary">SHOP NOW</a>
-  </div>
-</nav>
+{% include "components/_header.html" with nav_scrolled=True %}
 
 <section class="about" id="about" style="padding-top: 140px;">
   <div class="about-left">
@@ -54,6 +35,8 @@
     </div>
   </div>
 </section>
+
+{% include "components/_footer.html" %}
 
 <script src="{% static 'js/about.js' %}" defer></script>
 </body>

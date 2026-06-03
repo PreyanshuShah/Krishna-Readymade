@@ -22,8 +22,14 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", include("accounts.urls")),
     path("", include("store.urls")),
 ]
+
+handler400 = "store.error_views.bad_request"
+handler403 = "store.error_views.permission_denied"
+handler404 = "store.error_views.page_not_found"
+handler500 = "store.error_views.server_error"
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

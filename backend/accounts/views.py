@@ -1,4 +1,5 @@
 from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -61,3 +62,8 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect("home")
+
+
+@login_required
+def profile_view(request):
+    return render(request, "profile.html")

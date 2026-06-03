@@ -12,7 +12,7 @@
 <body>
 <main class="auth-shell">
   <section class="auth-panel">
-    <a class="auth-brand" href="{% url 'home' %}">Krishna<span>.</span></a>
+    <a class="auth-brand" href="{% url 'home' %}">Krishna Readymade</a>
     <h1>Register</h1>
     <p class="auth-copy">Create an account to use the cart and place orders.</p>
 
@@ -26,14 +26,17 @@
       <label>
         Username
         {{ form.username }}
+        {% if form.username.errors %}<span class="field-error">{{ form.username.errors|striptags }}</span>{% endif %}
       </label>
       <label>
         Password
         {{ form.password1 }}
+        {% if form.password1.errors %}<span class="field-error">{{ form.password1.errors|striptags }}</span>{% endif %}
       </label>
       <label>
         Confirm password
         {{ form.password2 }}
+        {% if form.password2.errors %}<span class="field-error">{{ form.password2.errors|striptags }}</span>{% endif %}
       </label>
 
       <button type="submit">Create Account</button>
