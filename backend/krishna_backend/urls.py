@@ -31,5 +31,5 @@ handler403 = "store.error_views.permission_denied"
 handler404 = "store.error_views.page_not_found"
 handler500 = "store.error_views.server_error"
 
-if settings.DEBUG:
+if settings.SERVE_MEDIA_FILES:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

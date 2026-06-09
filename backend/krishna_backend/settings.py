@@ -156,6 +156,7 @@ STORAGES = {
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BACKEND_DIR / "media"))
+SERVE_MEDIA_FILES = DEBUG or os.environ.get("DJANGO_SERVE_MEDIA", "0") == "1"
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()

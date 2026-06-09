@@ -21,6 +21,8 @@ This is a Django app, so deploy it as a Python web service rather than a static 
 
 Product and drop images are stored in `backend/media/` locally. On most app hosts, local files are not permanent unless you attach persistent storage.
 
+This project enables `DJANGO_SERVE_MEDIA=1` on Render so demo uploads can be served by Django. This is acceptable for a small demo, but it is not the right long-term production setup for a real store.
+
 For Render, attach a persistent disk if you want admin-uploaded images to survive deploys, then set:
 
 ```bash

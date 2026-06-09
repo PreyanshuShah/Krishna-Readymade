@@ -14,6 +14,8 @@ services:
         fromDatabase:
           name: krishna-readymade-db
           property: connectionString
+      - key: DJANGO_SERVE_MEDIA
+        value: "1"
 
 databases:
   - name: krishna-readymade-db
