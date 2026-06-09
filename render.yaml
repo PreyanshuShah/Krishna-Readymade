@@ -2,6 +2,7 @@ services:
   - type: web
     name: krishna-readymade
     env: python
+    plan: free
     buildCommand: ./build.sh
     startCommand: gunicorn --chdir backend krishna_backend.wsgi:application
     envVars:
@@ -16,3 +17,4 @@ services:
 
 databases:
   - name: krishna-readymade-db
+    plan: free
