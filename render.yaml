@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: krishna-readymade
+    env: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn --chdir backend krishna_backend.wsgi:application
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: krishna-readymade-db
+          property: connectionString
+
+databases:
+  - name: krishna-readymade-db
