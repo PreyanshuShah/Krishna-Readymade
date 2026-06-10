@@ -33,11 +33,17 @@ For a production store with frequent image uploads, object storage such as S3, C
 
 ## Admin Account
 
-After the site is deployed, open the host shell and run:
+Set these environment variables in Render before deploying if you want the build to create or reset the admin account automatically:
 
 ```bash
-python backend/manage.py createsuperuser
+DJANGO_SUPERUSER_USERNAME=admin
+DJANGO_SUPERUSER_EMAIL=preyanshushah@gmail.com
+DJANGO_SUPERUSER_PASSWORD=<your private password>
 ```
+
+The build runs `python backend/manage.py ensure_admin` after migrations.
+
+Alternatively, after the site is deployed, open the host shell and run `python backend/manage.py createsuperuser`.
 
 ## Local Production Check
 

@@ -16,6 +16,12 @@ services:
           property: connectionString
       - key: DJANGO_SERVE_MEDIA
         value: "1"
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: preyanshushah@gmail.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
 
 databases:
   - name: krishna-readymade-db
