@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.shortcuts import redirect, render
@@ -17,6 +17,10 @@ def _login_redirect_url(request, user):
     if user.is_staff:
         return reverse("admin_products")
     return _safe_next_url(request)
+
+
+def _first_registered_user_should_be_admin():
+    return not get_user_model().objects.exists()
 
 
 def login_view(request):
@@ -45,9 +49,14 @@ def register_view(request):
 
     form = UserCreationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
-        user = form.save()
+        first_user = _first_registered_user_should_be_admin()
+        user = form.save(commit=False)
+        if first_user:
+            user.is_staff = True
+            user.is_superuser = True
+        user.save()
         login(request, user)
-        return redirect(_safe_next_url(request))
+        return redirect(_login_redirect_url(request, user))
 
     return render(
         request,

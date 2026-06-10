@@ -360,6 +360,48 @@ class ProductApiTests(TestCase):
         self.assertEqual(response["Location"], "/shop/")
         self.assertTrue(get_user_model().objects.filter(username="newcustomer").exists())
 
+    def test_first_registered_user_becomes_admin(self):
+        get_user_model().objects.all().delete()
+
+        response = self.client.post(
+            "/register/?next=/shop/",
+            {
+                "username": "owner",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        user = get_user_model().objects.get(username="owner")
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], "/admin-products/")
+
+    def test_registered_users_after_first_are_customers(self):
+        get_user_model().objects.all().delete()
+        get_user_model().objects.create_user(
+            username="owner",
+            password="password",
+            is_staff=True,
+            is_superuser=True,
+        )
+
+        response = self.client.post(
+            "/register/?next=/shop/",
+            {
+                "username": "customer",
+                "password1": "StrongPass123!",
+                "password2": "StrongPass123!",
+            },
+        )
+
+        user = get_user_model().objects.get(username="customer")
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response["Location"], "/shop/")
+
     def test_staff_login_redirects_to_admin_products(self):
         response = self.client.post(
             "/login/?next=/shop/",
