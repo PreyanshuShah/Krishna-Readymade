@@ -499,7 +499,7 @@ class ProductApiTests(TestCase):
     MEDIA_URL="/media/",
 )
 class MediaRouteTests(TestCase):
-    def test_media_route_is_available_when_enabled(self):
-        response = Client().get("/media/missing-image.png")
+    def test_media_route_serves_file_when_enabled(self):
+        response = Client().get("/media/products/cap2.jpeg")
 
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 200)
