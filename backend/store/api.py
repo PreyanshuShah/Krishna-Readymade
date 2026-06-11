@@ -5,6 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 
+from .media import stored_image_url
 from .models import CartItem, NewDrop, Product
 
 
@@ -23,7 +24,7 @@ def product_payload(product):
         "icon": product.icon,
         "bg": product.bg,
         "emoji": product.emoji,
-        "image_url": product.image.url if product.image else "",
+        "image_url": stored_image_url(product.image),
         "sizes": [size.strip() for size in product.sizes.split(",") if size.strip()],
         "colors": [color.strip() for color in product.colors.split(",") if color.strip()],
         "stock_status": product.stock_status,
@@ -83,7 +84,7 @@ def new_drop_payload(drop):
         "icon": drop.icon,
         "button_text": drop.button_text,
         "button_url": drop.button_url,
-        "image_url": drop.image.url if drop.image else "",
+        "image_url": stored_image_url(drop.image),
         "is_active": drop.is_active,
         "created_at": drop.created_at,
         "updated_at": drop.updated_at,

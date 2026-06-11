@@ -47,6 +47,16 @@ class ProductApiTests(TestCase):
         self.assertEqual(data["products"][0]["colors"], ["Black", "White", "Navy"])
         self.assertEqual(data["products"][0]["stock_status"], "In stock")
 
+    def test_missing_product_image_returns_empty_url(self):
+        self.product.image = "products/missing-image.jpeg"
+        self.product.save(update_fields=["image"])
+
+        response = self.client.get("/api/products/")
+
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["products"][0]["image_url"], "")
+
     def test_list_products_can_filter_by_category(self):
         response = self.client.get("/api/products/?category=shirts&all=1")
 

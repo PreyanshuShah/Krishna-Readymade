@@ -14,8 +14,8 @@
 
 <main class="product-detail-page">
   <section class="product-detail-media">
-    {% if product.image %}
-    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+    {% if product.image_url %}
+    <img src="{{ product.image_url }}" alt="{{ product.name }}">
     {% else %}
     <div class="product-img-inner {{ product.bg }} product-placeholder">
       <span class="product-icon">{{ product.icon }}</span>

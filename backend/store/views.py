@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 
 from .api import products_payload
+from .media import stored_image_url
 from .models import CartItem, NewDrop, Product
 
 
@@ -26,7 +27,7 @@ def new_drop_context():
             "icon": active_drop.icon,
             "button_text": active_drop.button_text,
             "button_url": active_drop.button_url or shop_url,
-            "image_url": active_drop.image.url if active_drop.image else "",
+            "image_url": stored_image_url(active_drop.image),
         }
 
     return {

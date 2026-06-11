@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from .media import stored_image_url
+
 
 class Product(models.Model):
     CATEGORY_CHOICES = [
@@ -39,6 +41,9 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def image_url(self):
+        return stored_image_url(self.image)
+
 
 class NewDrop(models.Model):
     title = models.TextField(default="THE BOLD\nCOLLECTION")
@@ -74,6 +79,9 @@ class NewDrop(models.Model):
 
     def __str__(self):
         return self.title.splitlines()[0] if self.title else "New Drop"
+
+    def image_url(self):
+        return stored_image_url(self.image)
 
 
 class CartItem(models.Model):

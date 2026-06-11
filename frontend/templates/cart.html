@@ -26,8 +26,8 @@
       {% for item in items %}
       <article class="cart-line" data-product-id="{{ item.product.id }}" data-size="{{ item.size }}">
         <div class="cart-line-media">
-          {% if item.product.image %}
-          <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+          {% if item.product.image_url %}
+          <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
           {% else %}
           <span>{{ item.product.icon }}</span>
           {% endif %}
