@@ -1,7 +1,9 @@
 import json
+from io import StringIO
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.core.management import call_command
+from django.test import Client, TestCase, override_settings
 
 from .models import CartItem, NewDrop, Product
 
@@ -402,6 +404,43 @@ class ProductApiTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response["Location"], "/shop/")
 
+    def test_ensure_admin_promotes_first_existing_user_when_no_superuser_exists(self):
+        get_user_model().objects.all().delete()
+        first_user = get_user_model().objects.create_user(
+            username="owner",
+            password="password",
+        )
+        get_user_model().objects.create_user(
+            username="customer",
+            password="password",
+        )
+
+        call_command("ensure_admin", stdout=StringIO())
+
+        first_user.refresh_from_db()
+        self.assertTrue(first_user.is_staff)
+        self.assertTrue(first_user.is_superuser)
+        self.assertFalse(get_user_model().objects.get(username="customer").is_staff)
+
+    def test_ensure_admin_does_not_promote_customer_when_superuser_exists(self):
+        get_user_model().objects.all().delete()
+        get_user_model().objects.create_user(
+            username="owner",
+            password="password",
+            is_staff=True,
+            is_superuser=True,
+        )
+        customer = get_user_model().objects.create_user(
+            username="customer",
+            password="password",
+        )
+
+        call_command("ensure_admin", stdout=StringIO())
+
+        customer.refresh_from_db()
+        self.assertFalse(customer.is_staff)
+        self.assertFalse(customer.is_superuser)
+
     def test_staff_login_redirects_to_admin_products(self):
         response = self.client.post(
             "/login/?next=/shop/",
@@ -442,3 +481,15 @@ class ProductApiTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, "Page Not Found", status_code=404)
+
+
+@override_settings(
+    DEBUG=False,
+    SERVE_MEDIA_FILES=True,
+    MEDIA_URL="/media/",
+)
+class MediaRouteTests(TestCase):
+    def test_media_route_is_available_when_enabled(self):
+        response = Client().get("/media/missing-image.png")
+
+        self.assertEqual(response.status_code, 404)
