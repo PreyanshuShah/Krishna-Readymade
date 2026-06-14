@@ -27,7 +27,7 @@ def new_drop_context():
             "icon": active_drop.icon,
             "button_text": active_drop.button_text,
             "button_url": active_drop.button_url or shop_url,
-            "image_url": stored_image_url(active_drop.image),
+            "image_url": stored_image_url(active_drop.image, fallback="drops/cap2.jpeg"),
         }
 
     return {
@@ -49,7 +49,7 @@ def new_drop_context():
         "icon": "F",
         "button_text": "SHOP THE DROP",
         "button_url": shop_url,
-        "image_url": "",
+        "image_url": stored_image_url(None, fallback="drops/cap2.jpeg"),
     }
 
 

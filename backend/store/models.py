@@ -42,7 +42,7 @@ class Product(models.Model):
         return self.name
 
     def image_url(self):
-        return stored_image_url(self.image)
+        return stored_image_url(self.image, fallback="products/cap2.jpeg")
 
 
 class NewDrop(models.Model):
@@ -81,7 +81,7 @@ class NewDrop(models.Model):
         return self.title.splitlines()[0] if self.title else "New Drop"
 
     def image_url(self):
-        return stored_image_url(self.image)
+        return stored_image_url(self.image, fallback="drops/cap2.jpeg")
 
 
 class CartItem(models.Model):
