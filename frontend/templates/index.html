@@ -8,7 +8,7 @@
 <title>Krishna Readymade – Style That Defines You</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'css/index.css' %}?v=19">
+<link rel="stylesheet" href="{% static 'css/index.css' %}?v=20">
 <script>
   if (sessionStorage.getItem("krishnaHomeIntroShown") === "true") {
     document.documentElement.classList.add("skip-home-loader");
@@ -56,14 +56,21 @@
 
 <!-- QUICK VIEW MODAL -->
 <div class="modal-overlay" id="modalOverlay">
-  <div class="modal-box">
-    <button class="modal-close" id="modalClose">✕</button>
-    <div class="modal-img" id="modalImg">👕</div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <button class="modal-close" id="modalClose" aria-label="Close quick view">✕</button>
+    <div class="modal-media">
+      <div class="modal-img" id="modalImg">👕</div>
+      <div class="modal-media-label">Quick View</div>
+    </div>
     <div class="modal-content">
       <div class="product-badge product-badge-inline badge-new" id="modalBadge">NEW</div>
       <div class="modal-name" id="modalName">Premium Cotton Tee</div>
       <div class="modal-price" id="modalPrice">NPR 1,299</div>
-      <div class="size-label">SELECT SIZE</div>
+      <div class="modal-meta" id="modalMeta">
+        <span>In stock</span>
+        <span>Everyday wear</span>
+      </div>
+      <div class="size-label">Select Size</div>
       <div class="sizes" id="sizeSelector">
         <button class="size-btn" data-size="XS">XS</button>
         <button class="size-btn" data-size="S">S</button>
@@ -72,8 +79,12 @@
         <button class="size-btn" data-size="XL">XL</button>
         <button class="size-btn" data-size="XXL">XXL</button>
       </div>
-      <div class="size-label size-label-spaced">PRODUCT DETAILS</div>
-      <p class="modal-details">Premium quality fabric, slim fit design. Breathable and comfortable for all-day wear. Machine washable.</p>
+      <div class="size-label size-label-spaced">Product Details</div>
+      <div class="modal-details">
+        <div><span>Colors</span><strong id="modalColors">Black, White, Navy</strong></div>
+        <div><span>Sizes</span><strong id="modalSizes">XS - XXL</strong></div>
+        <div><span>Category</span><strong id="modalCategory">T-Shirt</strong></div>
+      </div>
       <button class="modal-add-btn" id="modalAddBtn">ADD TO CART</button>
     </div>
   </div>
@@ -294,6 +305,6 @@
 
 <script id="productsData" type="application/json">{{ products_json|default:"[]"|safe }}</script>
 <script src="{% static 'js/components/product-card.js' %}?v=2" defer></script>
-<script src="{% static 'js/index.js' %}?v=13" defer></script>
+<script src="{% static 'js/index.js' %}?v=14" defer></script>
 </body>
 </html>

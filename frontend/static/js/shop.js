@@ -62,6 +62,10 @@ const modalImg = document.getElementById("modalImg");
 const modalName = document.getElementById("modalName");
 const modalPrice = document.getElementById("modalPrice");
 const modalBadge = document.getElementById("modalBadge");
+const modalMeta = document.getElementById("modalMeta");
+const modalColors = document.getElementById("modalColors");
+const modalSizes = document.getElementById("modalSizes");
+const modalCategory = document.getElementById("modalCategory");
 const navCartCount = document.getElementById("navCartCount");
 const cartCount = document.getElementById("cartCount");
 const cartTotal = document.getElementById("cartTotal");
@@ -225,6 +229,14 @@ function categoryLabel(category) {
     jackets: "Jacket"
   };
   return labels[category] || "Product";
+}
+
+function listText(value, fallback) {
+  if (Array.isArray(value)) {
+    return value.filter(Boolean).join(", ") || fallback;
+  }
+
+  return value || fallback;
 }
 
 function renderSizeChips(sizes = []) {
@@ -566,18 +578,27 @@ function openModal(id) {
   modalName.textContent = product.name;
   modalPrice.textContent = `NPR ${product.price.toLocaleString()}`;
   if (product.imageUrl) {
-    modalImg.innerHTML = `<img class="modal-photo" src="${product.imageUrl}" alt="${product.name}">`;
+    modalImg.innerHTML = `<img class="modal-photo" src="${escapeHtml(product.imageUrl)}" alt="${escapeHtml(product.name)}">`;
     modalImg.style.fontSize = "";
   } else {
     modalImg.textContent = product.icon;
     modalImg.style.fontSize = "5rem";
   }
   updateModalBadge(product);
-  const detailText = document.querySelector(".modal-details");
-  if (detailText) {
-    const sizes = Array.isArray(product.sizes) ? product.sizes.join(", ") : product.sizes;
-    const colors = Array.isArray(product.colors) ? product.colors.join(", ") : product.colors;
-    detailText.textContent = `Sizes: ${sizes || "M"} | Colors: ${colors || "Standard"} | Stock: ${product.stockStatus || "In stock"}`;
+  if (modalMeta) {
+    modalMeta.innerHTML = `
+      <span>${escapeHtml(product.stockStatus || "In stock")}</span>
+      <span>${escapeHtml(categoryLabel(product.cat))}</span>
+    `;
+  }
+  if (modalColors) {
+    modalColors.textContent = listText(product.colors, "Standard");
+  }
+  if (modalSizes) {
+    modalSizes.textContent = listText(product.sizes, "M");
+  }
+  if (modalCategory) {
+    modalCategory.textContent = categoryLabel(product.cat);
   }
   resetSelectedSize();
   modalOverlay.classList.add("show");
